@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Read(//c/Users/shawn/.claude/projects/**)",
+      "Bash(taskkill //PID 155620 //F)",
+      "WebSearch",
+      "Bash(rm \"C:\\\\Users\\\\shawn\\\\.claude\\\\projects\\\\e--repos-twitch-boss-battle\\\\memory\\\\project_singleplayer.md\")"
+    ]
+  }
+}

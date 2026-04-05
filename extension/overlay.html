@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boss Battle — Overlay</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    html, body {
+      background: transparent !important;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay-container" id="overlay">
+
+    <!-- Top: Boss HP | Turn Counter | Streamer HP -->
+    <div class="overlay-top">
+      <div class="health-bar-group boss">
+        <div class="health-bar-label boss" id="boss-name">Chat Boss</div>
+        <div class="health-bar-container boss">
+          <div class="health-bar-fill boss" id="boss-hp-fill" style="width:100%"></div>
+          <div class="health-bar-text" id="boss-hp-text">500 / 500</div>
+        </div>
+      </div>
+
+      <div class="turn-counter">
+        <div class="turn-number" id="turn-number">Turn 0</div>
+        <div class="turn-timer-track">
+          <div class="turn-timer-fill" id="timer-fill" style="width:100%"></div>
+        </div>
+      </div>
+
+      <div class="health-bar-group streamer">
+        <div class="health-bar-label streamer">Streamer</div>
+        <div class="health-bar-container streamer">
+          <div class="health-bar-fill streamer" id="streamer-hp-fill" style="width:100%"></div>
+          <div class="health-bar-text" id="streamer-hp-text">300 / 300</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: attack effects -->
+    <div class="overlay-center" id="effects-area"></div>
+
+    <!-- Bottom: turn result log -->
+    <div class="overlay-bottom">
+      <div class="turn-log" id="turn-log"></div>
+    </div>
+
+  </div>
+
+  <!-- Game over banner (hidden by default) -->
+  <div class="game-banner victory hidden" id="banner-victory">Victory!</div>
+  <div class="game-banner defeat hidden" id="banner-defeat">Defeat!</div>
+
+  <!-- Mock Twitch helper when running in test harness -->
+  <script>
+    if (new URLSearchParams(window.location.search).get('mock') === 'true' && window.parent && window.parent !== window) {
+      // Read config from parent
+      var cfg = window.parent.BOSS_BATTLE_CONFIG || {};
+      window.BOSS_BATTLE_API_BASE = cfg.API_BASE || 'http://localhost:3000';
+      window.BOSS_BATTLE_SUPABASE_URL = cfg.SUPABASE_URL || '';
+      window.BOSS_BATTLE_SUPABASE_PUBLISHABLE_KEY = cfg.SUPABASE_PUBLISHABLE_KEY || '';
+      window.BOSS_BATTLE_CHANNEL_ID = (window.parent.MockTwitch && window.parent.MockTwitch.getChannel()) || 'test-channel-001';
+      document.write('<script src="../test-harness/mock-twitch-ext.js"><\/script>');
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-realtime.js"></script>
+  <script src="js/twitch-ext.js"></script>
+  <script src="js/overlay.js"></script>
+</body>
+</html>

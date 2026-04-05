@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vercel/
+.env
+.env.local
+.env.*.local
+extension.zip
+*.log
+.game-store.json
+.superpowers/
+
+.vercel
+.env*.local

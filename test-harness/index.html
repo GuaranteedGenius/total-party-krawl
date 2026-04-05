@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boss Battle Test Harness</title>
+  <style>
+    /* =====================================================================
+       Boss Battle Test Harness — Dark theme dashboard
+       ===================================================================== */
+
+    :root {
+      --bg-deep:       #0a0a0f;
+      --bg-card:       #12121a;
+      --bg-input:      #1a1a28;
+      --bg-section:    #15151f;
+      --border-subtle: #2a2a3a;
+      --boss-red:      #ff3333;
+      --streamer-blue: #33aaff;
+      --gold:          #ffd700;
+      --heal-green:    #33ff66;
+      --poison-green:  #66ff33;
+      --text-primary:  #eaeaea;
+      --text-secondary:#9999aa;
+      --text-muted:    #666678;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 13px;
+      overflow: hidden;
+    }
+
+    /* -- Header ----------------------------------------------------------- */
+
+    .harness-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #14141e 0%, #1a1a2e 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      height: 44px;
+      flex-shrink: 0;
+    }
+
+    .harness-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, var(--boss-red), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .harness-header .status-badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(51, 255, 102, 0.15);
+      color: var(--heal-green);
+      border: 1px solid rgba(51, 255, 102, 0.3);
+    }
+
+    /* -- Grid layout ------------------------------------------------------ */
+
+    .harness-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 1px;
+      height: calc(100vh - 44px);
+      background: var(--border-subtle);
+    }
+
+    .quadrant {
+      background: var(--bg-deep);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .q-liveconfig {
+      overflow: auto;
+    }
+
+    .quadrant-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0) 100%);
+      pointer-events: none;
+    }
+
+    .quadrant iframe {
+      border: none;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Overlay quadrant — fake stream background */
+    .q-overlay {
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(80, 20, 80, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 60%, rgba(20, 40, 80, 0.3) 0%, transparent 60%),
+        linear-gradient(180deg, #0d0d1a 0%, #1a0a1a 50%, #0a0a0f 100%);
+    }
+
+    .q-overlay iframe {
+      background: transparent;
+    }
+
+    /* Panel quadrant — constrained width */
+    .q-panel {
+      max-width: 100%;
+    }
+
+    .q-panel iframe {
+      max-width: 318px;
+      margin: 0 auto;
+    }
+
+    /* -- Test Controls Panel ---------------------------------------------- */
+
+    .q-controls {
+      overflow-y: auto;
+      padding: 28px 12px 12px 12px;
+    }
+
+    .q-controls::-webkit-scrollbar {
+      width: 6px;
+    }
+    .q-controls::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+    .q-controls::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 3px;
+    }
+
+    .tc-section {
+      background: var(--bg-section);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .tc-section h3 {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    /* Buttons */
+    .tc-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      transition: filter 0.15s, transform 0.1s;
+      margin: 2px;
+    }
+    .tc-btn:hover { filter: brightness(1.2); }
+    .tc-btn:active { transform: scale(0.97); }
+
+    .tc-btn-red    { background: linear-gradient(135deg, #cc2222 0%, #ff4444 100%); }
+    .tc-btn-blue   { background: linear-gradient(135deg, #2266bb 0%, #33aaff 100%); }
+    .tc-btn-gold   { background: linear-gradient(135deg, #aa8800 0%, #ffd700 100%); color: #1a1a28; }
+    .tc-btn-green  { background: linear-gradient(135deg, #11882a 0%, #33ff66 100%); color: #1a1a28; }
+    .tc-btn-purple { background: linear-gradient(135deg, #6633aa 0%, #9944ff 100%); }
+    .tc-btn-gray   { background: linear-gradient(135deg, #333 0%, #555 100%); }
+
+    .tc-btn-sm { padding: 4px 8px; font-size: 11px; }
+
+    /* Inputs */
+    .tc-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      color: var(--text-primary);
+      padding: 5px 8px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .tc-input:focus { border-color: var(--streamer-blue); }
+
+    .tc-input-sm { width: 60px; text-align: center; }
+
+    /* Config row */
+    .tc-config-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .tc-config-row label {
+      font-size: 10px;
+      color: var(--text-muted);
+      min-width: 55px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tc-config-row .tc-input {
+      flex: 1;
+      font-size: 11px;
+    }
+
+    /* Button row */
+    .tc-btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    /* Game summary */
+    .tc-summary {
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 6px 8px;
+      background: var(--bg-input);
+      border-radius: 4px;
+      margin-top: 6px;
+      min-height: 20px;
+    }
+
+    /* Vote count inline */
+    .tc-vote-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* Slider */
+    .tc-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tc-slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--streamer-blue);
+    }
+    .tc-slider-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--streamer-blue);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* JSON inspector */
+    #tc-game-state-json {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 8px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      max-height: 220px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .tc-json-key    { color: var(--streamer-blue); }
+    .tc-json-string { color: var(--heal-green); }
+    .tc-json-number { color: var(--gold); }
+    .tc-json-bool   { color: var(--boss-red); }
+    .tc-json-null   { color: var(--text-muted); }
+
+    /* Console log viewer */
+    #tc-console-log {
+      background: #0c0c12;
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 4px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .tc-log-entry {
+      display: flex;
+      gap: 6px;
+      padding: 1px 4px;
+      border-bottom: 1px solid rgba(42, 42, 58, 0.3);
+    }
+    .tc-log-entry:last-child { border-bottom: none; }
+
+    .tc-log-ts {
+      color: var(--text-muted);
+      flex-shrink: 0;
+      font-size: 10px;
+      min-width: 70px;
+    }
+    .tc-log-src {
+      color: var(--streamer-blue);
+      flex-shrink: 0;
+      font-size: 10px;
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tc-log-msg {
+      flex: 1;
+      word-break: break-all;
+    }
+
+    .tc-log-log  .tc-log-msg { color: var(--text-primary); }
+    .tc-log-warn .tc-log-msg { color: #ffcc00; }
+    .tc-log-error .tc-log-msg { color: var(--boss-red); }
+    .tc-log-error { background: rgba(255, 51, 51, 0.05); }
+
+    .tc-log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Load mock Twitch helper FIRST -->
+  <script src="mock-twitch-ext.js"></script>
+
+  <header class="harness-header">
+    <h1>Boss Battle Test Harness</h1>
+    <span class="status-badge">LOCAL DEV</span>
+  </header>
+
+  <div class="harness-grid">
+    <!-- Q1: Overlay (top-left) -->
+    <div class="quadrant q-overlay">
+      <div class="quadrant-label">Overlay View (16:9 Stream)</div>
+      <iframe
+        id="iframe-overlay"
+        src="../extension/overlay.html?mock=true"
+        allowtransparency="true"
+        name="overlay"
+      ></iframe>
+    </div>
+
+    <!-- Q2: Live Config (top-right) -->
+    <div class="quadrant q-liveconfig">
+      <div class="quadrant-label">Streamer Live Config</div>
+      <iframe
+        id="iframe-liveconfig"
+        src="../extension/live_config.html?mock=true"
+        name="live_config"
+      ></iframe>
+    </div>
+
+    <!-- Q3: Panel (bottom-left) -->
+    <div class="quadrant q-panel">
+      <div class="quadrant-label">Viewer Panel (318px)</div>
+      <iframe
+        id="iframe-panel"
+        src="../extension/panel.html?mock=true"
+        name="panel"
+      ></iframe>
+    </div>
+
+    <!-- Q4: Test Controls (bottom-right, inline) -->
+    <div class="quadrant q-controls" id="test-controls">
+      <div class="quadrant-label">Test Controls</div>
+
+      <!-- Supabase Config -->
+      <div class="tc-section">
+        <h3>Supabase Config</h3>
+        <div class="tc-config-row">
+          <label>URL</label>
+          <input class="tc-input" id="tc-supabase-url" type="text" placeholder="https://xyz.supabase.co">
+        </div>
+        <div class="tc-config-row">
+          <label>Pub Key</label>
+          <input class="tc-input" id="tc-supabase-key" type="text" placeholder="sb_publishable_...">
+        </div>
+        <div class="tc-btn-row">
+          <button class="tc-btn tc-btn-blue tc-btn-sm" id="tc-supabase-connect">Save &amp; Connect</button>
+        </div>
+      </div>
+
+      <!-- Game Controls -->
+      <div class="tc-section">
+        <h3>Game Controls</h3>
+        <div class="tc-btn-row">
+          <button class="tc-btn tc-btn-green" id="tc-start-game">Start New Game</button>
+          <button class="tc-btn tc-btn-gold" id="tc-resolve-turn">Force Resolve Turn</button>
+        </div>
+        <div class="tc-summary" id="tc-game-summary">Waiting for game data...</div>
+      </div>
+
+      <!-- Chat Vote Simulator -->
+      <div class="tc-section">
+        <h3>Chat Vote Simulator</h3>
+        <div class="tc-vote-row">
+          <label style="font-size:11px; color:var(--text-secondary)">Votes per click:</label>
+          <input class="tc-input tc-input-sm" id="tc-vote-count" type="number" value="1" min="1" max="100">
+        </div>
+        <div class="tc-btn-row">
+          <button class="tc-btn tc-btn-red" data-vote="slash">Slash</button>
+          <button class="tc-btn tc-btn-purple" data-vote="fireball">Fireball</button>
+          <button class="tc-btn tc-btn-green" data-vote="poison">Poison</button>
+          <button class="tc-btn tc-btn-blue" data-vote="heal">Heal</button>
+        </div>
+      </div>
+
+      <!-- Bits Transaction Simulator -->
+      <div class="tc-section">
+        <h3>Bits Transactions</h3>
+        <div class="tc-btn-row">
+          <button class="tc-btn tc-btn-gold" id="tc-bits-ultimate">Ultimate Strike (100 Bits)</button>
+          <button class="tc-btn tc-btn-green" id="tc-bits-heal">Full Heal (500 Bits)</button>
+        </div>
+      </div>
+
+      <!-- Viewer Simulator -->
+      <div class="tc-section">
+        <h3>Viewer Simulator</h3>
+        <div class="tc-slider-row">
+          <input type="range" id="tc-viewer-slider" min="0" max="10000" value="150">
+          <span class="tc-slider-val" id="tc-viewer-count">150</span>
+        </div>
+      </div>
+
+      <!-- Game State Inspector -->
+      <div class="tc-section">
+        <h3>Game State Inspector</h3>
+        <pre id="tc-game-state-json">{ "status": "polling..." }</pre>
+      </div>
+
+      <!-- Console Log Viewer -->
+      <div class="tc-section">
+        <div class="tc-log-header">
+          <h3 style="border:none; margin:0; padding:0;">Console Log</h3>
+          <button class="tc-btn tc-btn-gray tc-btn-sm" onclick="clearConsoleLog()">Clear</button>
+        </div>
+        <div id="tc-console-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test controls JS (after DOM) -->
+  <script src="test-controls.js"></script>
+
+</body>
+</html>

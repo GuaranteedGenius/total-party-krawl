@@ -1,0 +1,22 @@
+{
+  "name": "twitch-boss-battle",
+  "version": "1.0.0",
+  "description": "Chat vs Streamer Boss Battle — Twitch Extension",
+  "private": true,
+  "scripts": {
+    "dev": "",
+    "build": "",
+    "test": "node --test lib/__tests__/game-engine.test.ts",
+    "zip-extension": "cd extension && zip -r ../extension.zip . && cd .."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2",
+    "vercel": "^33.0.0"
+  }
+}

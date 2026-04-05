@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boss Battle — Panel</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    html, body {
+      background: #0a0a0f;
+      max-width: 318px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="panel-container" id="panel">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <h1>Boss Attack Vote</h1>
+      <div class="panel-status" id="panel-status">Waiting for game...</div>
+    </div>
+
+    <!-- Mini health bars -->
+    <div class="panel-health-bars">
+      <div class="panel-bar-row">
+        <span class="panel-bar-label boss">Boss</span>
+        <div class="panel-bar-track">
+          <div class="panel-bar-fill boss" id="panel-boss-fill" style="width:100%"></div>
+          <div class="panel-bar-hp" id="panel-boss-hp">500/500</div>
+        </div>
+      </div>
+      <div class="panel-bar-row">
+        <span class="panel-bar-label streamer">Streamer</span>
+        <div class="panel-bar-track">
+          <div class="panel-bar-fill streamer" id="panel-streamer-fill" style="width:100%"></div>
+          <div class="panel-bar-hp" id="panel-streamer-hp">300/300</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="turn-counter" style="align-self:center;">
+      <div class="turn-number" id="panel-turn">Turn 0</div>
+      <div class="turn-timer-track">
+        <div class="turn-timer-fill" id="panel-timer-fill" style="width:100%"></div>
+      </div>
+    </div>
+
+    <!-- Vote buttons -->
+    <div class="vote-section-title">Choose Boss Attack</div>
+    <div class="vote-buttons" id="vote-buttons">
+      <button class="vote-btn" data-action="slash">
+        <span class="icon">&#9876;&#65039;</span>
+        <div class="info">
+          <span class="action-name">Slash</span>
+          <span class="action-desc">Basic melee strike</span>
+        </div>
+        <span class="vote-count" data-count="slash">0</span>
+      </button>
+      <button class="vote-btn" data-action="fireball">
+        <span class="icon">&#128293;</span>
+        <div class="info">
+          <span class="action-name">Fireball</span>
+          <span class="action-desc">Heavy magic damage</span>
+        </div>
+        <span class="vote-count" data-count="fireball">0</span>
+      </button>
+      <button class="vote-btn" data-action="poison">
+        <span class="icon">&#9760;&#65039;</span>
+        <div class="info">
+          <span class="action-name">Poison</span>
+          <span class="action-desc">Damage over time</span>
+        </div>
+        <span class="vote-count" data-count="poison">0</span>
+      </button>
+      <button class="vote-btn" data-action="heal">
+        <span class="icon">&#128154;</span>
+        <div class="info">
+          <span class="action-name">Heal</span>
+          <span class="action-desc">Restore boss HP</span>
+        </div>
+        <span class="vote-count" data-count="heal">0</span>
+      </button>
+    </div>
+
+    <!-- Vote tally chart -->
+    <div class="vote-tally" id="vote-tally">
+      <div class="tally-row">
+        <span class="tally-label">Slash</span>
+        <div class="tally-bar-track"><div class="tally-bar-fill" id="tally-slash" style="width:0%"></div></div>
+        <span class="tally-count" id="tally-slash-count">0</span>
+      </div>
+      <div class="tally-row">
+        <span class="tally-label">Fireball</span>
+        <div class="tally-bar-track"><div class="tally-bar-fill" id="tally-fireball" style="width:0%"></div></div>
+        <span class="tally-count" id="tally-fireball-count">0</span>
+      </div>
+      <div class="tally-row">
+        <span class="tally-label">Poison</span>
+        <div class="tally-bar-track"><div class="tally-bar-fill" id="tally-poison" style="width:0%"></div></div>
+        <span class="tally-count" id="tally-poison-count">0</span>
+      </div>
+      <div class="tally-row">
+        <span class="tally-label">Heal</span>
+        <div class="tally-bar-track"><div class="tally-bar-fill" id="tally-heal" style="width:0%"></div></div>
+        <span class="tally-count" id="tally-heal-count">0</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Mock Twitch helper when running in test harness -->
+  <script>
+    if (new URLSearchParams(window.location.search).get('mock') === 'true' && window.parent && window.parent !== window) {
+      var cfg = window.parent.BOSS_BATTLE_CONFIG || {};
+      window.BOSS_BATTLE_API_BASE = cfg.API_BASE || 'http://localhost:3000';
+      window.BOSS_BATTLE_SUPABASE_URL = cfg.SUPABASE_URL || '';
+      window.BOSS_BATTLE_SUPABASE_PUBLISHABLE_KEY = cfg.SUPABASE_PUBLISHABLE_KEY || '';
+      window.BOSS_BATTLE_CHANNEL_ID = (window.parent.MockTwitch && window.parent.MockTwitch.getChannel()) || 'test-channel-001';
+      window.BOSS_BATTLE_VIEWER_ID = (window.parent.MockTwitch && window.parent.MockTwitch.getUser()) || 'mock-viewer-001';
+      document.write('<script src="../test-harness/mock-twitch-ext.js"><\/script>');
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-realtime.js"></script>
+  <script src="js/twitch-ext.js"></script>
+  <script src="js/panel.js"></script>
+</body>
+</html>
