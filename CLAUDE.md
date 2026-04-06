@@ -95,17 +95,13 @@ These two modes share 90%+ of the codebase. The difference is who controls the b
 
 ## Current State
 
-The repo has an early MVP prototype (pre-pivot) with:
-- Vercel serverless API (game/start, game/vote, game/action, game/resolve, game/state)
-- Twitch extension HTML/JS (overlay, panel, live_config, config)
-- Game engine with turn resolution (TypeScript — will be rewritten in C# in Godot)
-- Test harness for local development
-- Mock Twitch auth for testing
+Clean slate. Old prototype code has been removed. The repo structure is ready for:
+- `game/` — Godot 4 C# project (game logic + rendering)
+- `api/` — Vercel serverless endpoints (auth, relay, persistence)
+- `extension/` — Twitch extension (viewer controller)
 
-This prototype was built for the old "Raid Boss" (chat votes) concept. The pivot is to Godot game client + extension hybrid for Fight Me / Total Party Krawl modes. The TypeScript game engine will be replaced by C# in Godot.
-
-### Art Style Test Project
-Before building the full game, a separate small Godot test project is being developed to nail the visual pipeline: low-poly 3D models → post-processing → unique art style. This is the visual identity exploration phase.
+### Current Focus: Art Style Test
+Building a small Godot test scene to nail the visual pipeline before full development: low-poly 3D models + post-processing shaders (cel shading, outlines, color grading) + destructible environment test. 3/4 top-down perspective camera with narrow FOV perspective (not orthographic).
 
 ## Development Guidelines
 

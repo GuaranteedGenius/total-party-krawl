@@ -1,13 +1,26 @@
+# Dependencies
 node_modules/
 dist/
-.vercel/
+
+# Environment
 .env
 .env.local
 .env.*.local
+
+# Vercel
+.vercel/
+
+# Godot
+.godot/
+*.import
+export_presets.cfg
+
+# Build artifacts
 extension.zip
 *.log
 .game-store.json
 .superpowers/
 
-.vercel
-.env*.local
+# OS
+.DS_Store
+Thumbs.db
