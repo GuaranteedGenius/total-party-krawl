@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cxr7qhelibqlk" path="res://assets/barrel_wood_1.glb" id="4_qjkoh"]
 [ext_resource type="PackedScene" uid="uid://d02qfm8m31use" path="res://assets/pillar_stone_1.glb" id="5_6helt"]
 [ext_resource type="PackedScene" uid="uid://t4a3hdf2ikir" path="res://assets/crate_wood_1.glb" id="6_0oqbn"]
+[ext_resource type="Material" path="res://materials/pillar_stone_cel.tres" id="7_pillarcel"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
@@ -41,14 +42,34 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7831006, 0, 2.500573)
 [node name="pillar_stone_1" parent="." unique_id=2081804453 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6650515, 0, -5.9063926)
 
+[editable path="pillar_stone_1"]
+
+[node name="pillar_1" parent="pillar_stone_1" index="0"]
+surface_material_override/0 = ExtResource("7_pillarcel")
+
 [node name="pillar_stone_1" parent="pillar_stone_1" unique_id=1027736767 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0066576004, 0, 2.824864)
+
+[editable path="pillar_stone_1/pillar_stone_1"]
+
+[node name="pillar_1" parent="pillar_stone_1/pillar_stone_1" index="0"]
+surface_material_override/0 = ExtResource("7_pillarcel")
 
 [node name="pillar_stone_2" parent="." unique_id=1295413452 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8940659, 0, -5.9063926)
 
+[editable path="pillar_stone_2"]
+
+[node name="pillar_1" parent="pillar_stone_2" index="0"]
+surface_material_override/0 = ExtResource("7_pillarcel")
+
 [node name="pillar_stone_1" parent="pillar_stone_2" unique_id=949757288 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0066576004, 0, 2.824864)
+
+[editable path="pillar_stone_2/pillar_stone_1"]
+
+[node name="pillar_1" parent="pillar_stone_2/pillar_stone_1" index="0"]
+surface_material_override/0 = ExtResource("7_pillarcel")
 
 [node name="crate_wood_1" parent="." unique_id=2006013783 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8356395, 0, -6.875702)

@@ -1,0 +1,115 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://b0vaclrpqvli6"
+path="res://.godot/imported/boss_test_model.glb-26c5e17e3f857e309023e02e3c771e72.scn"
+
+[deps]
+
+source_file="res://assets/boss_test_model.glb"
+dest_files=["res://.godot/imported/boss_test_model.glb-26c5e17e3f857e309023e02e3c771e72.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"materials": {
+"Material.001": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__Material_001.tres",
+"use_external/path": "res://materials/boss_test_model__Material_001.tres"
+},
+"Material.002": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__Material_002.tres",
+"use_external/path": "res://materials/boss_test_model__Material_002.tres"
+},
+"Material.003": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__Material_003.tres",
+"use_external/path": "res://materials/boss_test_model__Material_003.tres"
+},
+"Material.004": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__Material_004.tres",
+"use_external/path": "res://materials/boss_test_model__Material_004.tres"
+},
+"Material.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__Material_005.tres",
+"use_external/path": "res://materials/boss_test_model__Material_005.tres"
+},
+"ear_ring_gold": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__ear_ring_gold.tres",
+"use_external/path": "res://materials/boss_test_model__ear_ring_gold.tres"
+},
+"eye_color": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__eye_color.tres",
+"use_external/path": "res://materials/boss_test_model__eye_color.tres"
+},
+"eye_white": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__eye_white.tres",
+"use_external/path": "res://materials/boss_test_model__eye_white.tres"
+},
+"eyebrows_brown": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__eyebrows_brown.tres",
+"use_external/path": "res://materials/boss_test_model__eyebrows_brown.tres"
+},
+"gablin_hair_1": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__gablin_hair_1.tres",
+"use_external/path": "res://materials/boss_test_model__gablin_hair_1.tres"
+},
+"pants_blue": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__pants_blue.tres",
+"use_external/path": "res://materials/boss_test_model__pants_blue.tres"
+},
+"shirt_white": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__shirt_white.tres",
+"use_external/path": "res://materials/boss_test_model__shirt_white.tres"
+},
+"shoes_brown": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__shoes_brown.tres",
+"use_external/path": "res://materials/boss_test_model__shoes_brown.tres"
+},
+"skin_1": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/boss_test_model__skin_1.tres",
+"use_external/path": "res://materials/boss_test_model__skin_1.tres"
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1

@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/cel.gdshader" id="1"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1")
+shader_parameter/albedo = Color(0.906348, 0.553665, 0.487627, 1.000000)
+shader_parameter/ramp_steps = 3
+shader_parameter/shadow_floor = 0.25
+shader_parameter/rim_strength = 0.15
+shader_parameter/fill_light = 0.0
