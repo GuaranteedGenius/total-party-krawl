@@ -1,6 +1,7 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
 
 [ext_resource type="Shader" path="res://shaders/cel.gdshader" id="1"]
+[ext_resource type="Material" path="res://materials/outline.tres" id="2"]
 
 [resource]
 render_priority = 0
@@ -10,3 +11,4 @@ shader_parameter/ramp_steps = 3
 shader_parameter/shadow_floor = 0.25
 shader_parameter/rim_strength = 0.15
 shader_parameter/fill_light = 0.0
+next_pass = ExtResource("2")
