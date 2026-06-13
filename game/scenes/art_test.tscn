@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://b6sujfe1xj15"]
+
+[ext_resource type="PackedScene" uid="uid://esq267005jjw" path="res://assets/test_floor.glb" id="1_t76u2"]
+[ext_resource type="PackedScene" uid="uid://b0vaclrpqvli6" path="res://assets/boss_test_model.glb" id="2_221ao"]
+[ext_resource type="PackedScene" uid="uid://c8wuhpvnxfil8" path="res://assets/player_base_model_male_1.glb" id="3_bv5be"]
+[ext_resource type="PackedScene" uid="uid://cxr7qhelibqlk" path="res://assets/barrel_wood_1.glb" id="4_qjkoh"]
+[ext_resource type="PackedScene" uid="uid://d02qfm8m31use" path="res://assets/pillar_stone_1.glb" id="5_6helt"]
+[ext_resource type="PackedScene" uid="uid://t4a3hdf2ikir" path="res://assets/crate_wood_1.glb" id="6_0oqbn"]
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.6, 0.62, 0.7, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 3
+adjustment_enabled = true
+adjustment_brightness = 1.02
+adjustment_contrast = 1.08
+adjustment_saturation = 1.15
+
+[node name="Node3D" type="Node3D" unique_id=832495262]
+
+[node name="test_floor" parent="." unique_id=192076484 instance=ExtResource("1_t76u2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -1)
+
+[node name="boss_test_model" parent="." unique_id=498556743 instance=ExtResource("2_221ao")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012996435, 0, -4.9619236)
+
+[node name="player_base_model_male_1" parent="." unique_id=662660846 instance=ExtResource("3_bv5be")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.0147743225, 0, 3.038087)
+
+[node name="barrel_wood_1" parent="." unique_id=1783507557 instance=ExtResource("4_qjkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6754436, 0, 1.3698926)
+
+[node name="barrel_wood_2" parent="." unique_id=1689874826 instance=ExtResource("4_qjkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1882024, 0, 1.3698926)
+
+[node name="barrel_wood_3" parent="." unique_id=1755746289 instance=ExtResource("4_qjkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7831006, 0, 2.500573)
+
+[node name="pillar_stone_1" parent="." unique_id=2081804453 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6650515, 0, -5.9063926)
+
+[node name="pillar_stone_1" parent="pillar_stone_1" unique_id=1027736767 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0066576004, 0, 2.824864)
+
+[node name="pillar_stone_2" parent="." unique_id=1295413452 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8940659, 0, -5.9063926)
+
+[node name="pillar_stone_1" parent="pillar_stone_2" unique_id=949757288 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0066576004, 0, 2.824864)
+
+[node name="crate_wood_1" parent="." unique_id=2006013783 instance=ExtResource("6_0oqbn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8356395, 0, -6.875702)
+
+[node name="crate_wood_2" parent="." unique_id=930408642 instance=ExtResource("6_0oqbn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.40798724, 0, -7.2103086)
+
+[node name="crate_wood_3" parent="." unique_id=1085546892 instance=ExtResource("6_0oqbn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73765266, 0, -8.288818)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, -2, 14, 16)
+fov = 30.0
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 8, 0)
+shadow_enabled = true
+light_energy = 1.2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
