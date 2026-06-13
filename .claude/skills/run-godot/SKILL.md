@@ -8,7 +8,7 @@ description: Launch a Godot scene on the installed 4.5.1-mono binary and capture
 Runs a Godot scene and writes a screenshot so visual changes can be verified.
 
 ## Binary
-`C:\Program Files\Godot\Godot_v4.5.1-stable_mono_win64_console.exe`
+`C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe`
 
 ## How it works
 The project autoloads `res://tools/screenshot_on_ready.gd`. When the `TPK_SCREENSHOT`
@@ -20,7 +20,7 @@ normally.
 ```powershell
 $env:TPK_SCREENSHOT = "E:\repos\twitch\total-party-krawl\game\.run\art_test.png"
 New-Item -ItemType Directory -Force "E:\repos\twitch\total-party-krawl\game\.run" | Out-Null
-& "C:\Program Files\Godot\Godot_v4.5.1-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
+& "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
 Remove-Item Env:\TPK_SCREENSHOT
 ```
 
