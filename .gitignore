@@ -12,7 +12,6 @@ dist/
 
 # Godot
 .godot/
-*.import
 export_presets.cfg
 
 # Build artifacts
