@@ -8,6 +8,14 @@ func _ready() -> void:
 		return
 	# Let the scene render and physics settle a few frames.
 	await get_tree().create_timer(0.6).timeout
+	# Optional: fire the "destruct" action and let Jolt scatter the fragments
+	# before capturing. Gated on TPK_DESTRUCT so normal runs are unaffected.
+	if OS.get_environment("TPK_DESTRUCT") != "":
+		var ev := InputEventKey.new()
+		ev.physical_keycode = KEY_SPACE
+		ev.pressed = true
+		Input.parse_input_event(ev)
+		await get_tree().create_timer(1.6).timeout
 	var img := get_viewport().get_texture().get_image()
 	var err := img.save_png(out_path)
 	if err != OK:

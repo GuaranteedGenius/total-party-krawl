@@ -26,6 +26,29 @@ Remove-Item Env:\TPK_SCREENSHOT
 
 Then Read the PNG at `game/.run/art_test.png` to inspect the result.
 
+## Capture the destruction test headlessly
+Also set `TPK_DESTRUCT` to make the autoload inject a Space key (the destruct trigger) after the
+scene loads, wait ~1.6s for Jolt to scatter and settle the fragments, then screenshot. The
+`DestructionTest` script logs `shattering into N fragment meshes` to stdout on success.
+```powershell
+$env:TPK_SCREENSHOT = "E:\repos\twitch\total-party-krawl\game\.run\destruction.png"
+$env:TPK_DESTRUCT = "1"
+& "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
+Remove-Item Env:\TPK_SCREENSHOT
+Remove-Item Env:\TPK_DESTRUCT
+```
+
+## Reimport first if shaders/assets changed (IMPORTANT)
+A plain run (`godot --path … scene`) does NOT reimport changed source resources — it uses the
+cached import in `.godot/`. Edits to `.glsl` compute shaders, `.gdshader` files, or GLB import
+settings will silently run STALE until you force a reimport pass:
+```powershell
+& "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --headless --import --path "E:\repos\twitch\total-party-krawl\game"
+```
+Run this BEFORE the screenshot launch whenever a shader/asset changed. (`.gd`/`.cs` scripts load
+at runtime and do NOT need this; `.tscn`/`.tres` are read fresh too.) Keep shader source ASCII —
+non-ASCII chars like `—` in comments throw a unicode warning on import.
+
 ## Build C# first if scripts changed
 If C# was edited, build before running so the assembly is current:
 ```powershell

@@ -20,6 +20,12 @@ extension.zip
 .game-store.json
 .superpowers/
 
+# Editor
+.vscode/
+
+# Godot C# project backups (editor-generated on SDK upgrade)
+*.csproj.old
+
 # OS
 .DS_Store
 Thumbs.db

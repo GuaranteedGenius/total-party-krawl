@@ -7,101 +7,215 @@
 [ext_resource type="PackedScene" uid="uid://d02qfm8m31use" path="res://assets/pillar_stone_1.glb" id="5_6helt"]
 [ext_resource type="PackedScene" uid="uid://t4a3hdf2ikir" path="res://assets/crate_wood_1.glb" id="6_0oqbn"]
 [ext_resource type="Material" path="res://materials/pillar_stone_cel.tres" id="7_pillarcel"]
-[ext_resource type="Script" path="res://scripts/DestructionTest.cs" id="8_destruct"]
+[ext_resource type="Script" uid="uid://c7jj8bald2jv6" path="res://scripts/DestructionTest.cs" id="8_destruct"]
 [ext_resource type="PackedScene" uid="uid://obk7vt4k8i33" path="res://assets/crate_wood_1_fragments.glb" id="9_crfrag"]
+[ext_resource type="Material" path="res://materials/test_floor__floor.tres" id="10_floor"]
+[ext_resource type="Material" path="res://materials/test_floor__drain_dark_grey.tres" id="11_drain"]
+[ext_resource type="Material" path="res://materials/test_floor__drain_lid.tres" id="12_drainlid"]
+[ext_resource type="Material" path="res://materials/barrel_wood_1__barrel_planks.tres" id="13_bplanks"]
+[ext_resource type="Material" path="res://materials/barrel_wood_1__barrel_rings.tres" id="14_brings"]
+[ext_resource type="Material" path="res://materials/barrel_wood_1__barrel_tops.tres" id="15_btops"]
+[ext_resource type="Material" path="res://materials/crate_wood_1__crate_walls.tres" id="16_cwalls"]
+[ext_resource type="Material" path="res://materials/crate_wood_1__crate_ribs.tres" id="17_cribs"]
+[ext_resource type="Material" path="res://materials/crate_wood_1__crate_metal_corners.tres" id="18_ccorners"]
+[ext_resource type="Material" path="res://materials/boss_test_model__Material_001.tres" id="19_bm1"]
+[ext_resource type="Material" path="res://materials/boss_test_model__Material_002.tres" id="20_bm2"]
+[ext_resource type="Material" path="res://materials/boss_test_model__Material_003.tres" id="21_bm3"]
+[ext_resource type="Material" path="res://materials/boss_test_model__Material_004.tres" id="22_bm4"]
+[ext_resource type="Material" path="res://materials/boss_test_model__Material_005.tres" id="23_bm5"]
+[ext_resource type="Material" path="res://materials/boss_test_model__shirt_white.tres" id="24_bshirt"]
+[ext_resource type="Material" path="res://materials/boss_test_model__eye_color.tres" id="25_beyec"]
+[ext_resource type="Material" path="res://materials/boss_test_model__skin_1.tres" id="26_bskin"]
+[ext_resource type="Material" path="res://materials/boss_test_model__eye_white.tres" id="27_beyew"]
+[ext_resource type="Material" path="res://materials/boss_test_model__pants_blue.tres" id="28_bpants"]
+[ext_resource type="Material" path="res://materials/boss_test_model__shoes_brown.tres" id="29_bshoes"]
+[ext_resource type="Material" path="res://materials/boss_test_model__eyebrows_brown.tres" id="30_bbrows"]
+[ext_resource type="Material" path="res://materials/boss_test_model__ear_ring_gold.tres" id="31_bring"]
+[ext_resource type="Material" path="res://materials/boss_test_model__gablin_hair_1.tres" id="32_bhair"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__eyebrows_brown.tres" id="33_pbrows"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__skin_1.tres" id="34_pskin"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__eye_white.tres" id="35_peyew"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__eye_color.tres" id="36_peyec"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__shirt_white.tres" id="37_pshirt"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__pants_blue.tres" id="38_ppants"]
+[ext_resource type="Material" path="res://materials/player_base_model_male_1__shoes_brown.tres" id="39_pshoes"]
+[ext_resource type="Compositor" uid="uid://gpy3r0mtdagu" path="res://materials/outline_compositor.tres" id="40_outlinefx"]
+[ext_resource type="PackedScene" uid="uid://dniyiym682nom" path="res://assets/barrel_wood_1_fragments.glb" id="41_brfrag"]
+[ext_resource type="PackedScene" uid="uid://cvp5dhfyg5lsr" path="res://assets/pillar_stone_1_fragments.glb" id="42_plfrag"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
 ambient_light_source = 2
-ambient_light_color = Color(0.6, 0.62, 0.7, 1)
-ambient_light_energy = 0.5
+ambient_light_color = Color(0.74, 0.7, 0.62, 1)
+ambient_light_energy = 0.3
 tonemap_mode = 3
 adjustment_enabled = true
-adjustment_brightness = 1.02
-adjustment_contrast = 1.08
-adjustment_saturation = 1.15
+adjustment_contrast = 1.05
+adjustment_saturation = 1.12
 
 [sub_resource type="BoxShape3D" id="floor_shape"]
 size = Vector3(40, 0.2, 40)
 
 [node name="Node3D" type="Node3D" unique_id=832495262]
 script = ExtResource("8_destruct")
-TargetPath = NodePath("crate_wood_1")
-FragmentsScene = ExtResource("9_crfrag")
+BarrelFragments = ExtResource("41_brfrag")
+CrateFragments = ExtResource("9_crfrag")
+PillarFragments = ExtResource("42_plfrag")
 
 [node name="test_floor" parent="." unique_id=192076484 instance=ExtResource("1_t76u2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -1)
 
+[node name="floor" parent="test_floor" index="0"]
+transform = Transform3D(0.14784981, 0, 0, 0, 0.14784981, 0, 0, 0, 0.14784981, 0, 0.31654763, 0)
+surface_material_override/0 = ExtResource("10_floor")
+
+[node name="drain" parent="test_floor" index="1"]
+surface_material_override/0 = ExtResource("11_drain")
+
+[node name="drain_lid" parent="test_floor" index="2"]
+surface_material_override/0 = ExtResource("12_drainlid")
+
 [node name="boss_test_model" parent="." unique_id=498556743 instance=ExtResource("2_221ao")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012996435, 0, -4.9619236)
+
+[node name="boss_test_1" parent="boss_test_model" index="0"]
+surface_material_override/0 = ExtResource("19_bm1")
+surface_material_override/1 = ExtResource("20_bm2")
+surface_material_override/2 = ExtResource("21_bm3")
+surface_material_override/3 = ExtResource("22_bm4")
+surface_material_override/4 = ExtResource("23_bm5")
+surface_material_override/5 = ExtResource("24_bshirt")
+surface_material_override/6 = ExtResource("25_beyec")
+surface_material_override/7 = ExtResource("26_bskin")
+surface_material_override/8 = ExtResource("27_beyew")
+surface_material_override/9 = ExtResource("28_bpants")
+surface_material_override/10 = ExtResource("29_bshoes")
+surface_material_override/11 = ExtResource("30_bbrows")
+surface_material_override/12 = ExtResource("31_bring")
+surface_material_override/13 = ExtResource("32_bhair")
 
 [node name="player_base_model_male_1" parent="." unique_id=662660846 instance=ExtResource("3_bv5be")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.0147743225, 0, 3.038087)
 
+[node name="player_base_model_male_1_final_joined" parent="player_base_model_male_1" index="0"]
+surface_material_override/0 = ExtResource("33_pbrows")
+surface_material_override/1 = ExtResource("34_pskin")
+surface_material_override/2 = ExtResource("35_peyew")
+surface_material_override/3 = ExtResource("36_peyec")
+surface_material_override/4 = ExtResource("37_pshirt")
+surface_material_override/5 = ExtResource("38_ppants")
+surface_material_override/6 = ExtResource("39_pshoes")
+
 [node name="barrel_wood_1" parent="." unique_id=1783507557 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6754436, 0, 1.3698926)
+
+[node name="Cylinder_005" parent="barrel_wood_1" index="0"]
+surface_material_override/0 = ExtResource("13_bplanks")
+surface_material_override/1 = ExtResource("14_brings")
+surface_material_override/2 = ExtResource("15_btops")
 
 [node name="barrel_wood_2" parent="." unique_id=1689874826 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1882024, 0, 1.3698926)
 
+[node name="Cylinder_005" parent="barrel_wood_2" index="0"]
+surface_material_override/0 = ExtResource("13_bplanks")
+surface_material_override/1 = ExtResource("14_brings")
+surface_material_override/2 = ExtResource("15_btops")
+
 [node name="barrel_wood_3" parent="." unique_id=1755746289 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7831006, 0, 2.500573)
 
-[node name="pillar_stone_1" parent="." unique_id=2081804453 instance=ExtResource("5_6helt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6650515, 0, -5.9063926)
+[node name="Cylinder_005" parent="barrel_wood_3" index="0"]
+surface_material_override/0 = ExtResource("13_bplanks")
+surface_material_override/1 = ExtResource("14_brings")
+surface_material_override/2 = ExtResource("15_btops")
 
-[editable path="pillar_stone_1"]
+[node name="pillar_stone_3" parent="." unique_id=1027736767 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -3)
 
-[node name="pillar_1" parent="pillar_stone_1" index="0"]
+[node name="pillar_1" parent="pillar_stone_3" index="0" unique_id=2090781254]
+skeleton = NodePath("../../pillar_stone_3")
 surface_material_override/0 = ExtResource("7_pillarcel")
 
-[node name="pillar_stone_1" parent="pillar_stone_1" unique_id=1027736767 instance=ExtResource("5_6helt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0066576004, 0, 2.824864)
+[node name="pillar_stone_1" parent="." unique_id=2081804453 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -5)
 
-[editable path="pillar_stone_1/pillar_stone_1"]
+[node name="pillar_1" parent="pillar_stone_1" index="0" unique_id=2090781254]
+surface_material_override/0 = ExtResource("7_pillarcel")
 
-[node name="pillar_1" parent="pillar_stone_1/pillar_stone_1" index="0"]
+[node name="pillar_stone_4" parent="." unique_id=949757288 instance=ExtResource("5_6helt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -9)
+
+[node name="pillar_1" parent="pillar_stone_4" index="0" unique_id=2090781254]
+transform = Transform3D(0.49492478, 0, 0, 0, 1.5342438, 0, 0, 0, 0.49492478, -0.009198666, 0, 0)
+skeleton = NodePath("../../pillar_stone_4")
 surface_material_override/0 = ExtResource("7_pillarcel")
 
 [node name="pillar_stone_2" parent="." unique_id=1295413452 instance=ExtResource("5_6helt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8940659, 0, -5.9063926)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -7)
 
-[editable path="pillar_stone_2"]
-
-[node name="pillar_1" parent="pillar_stone_2" index="0"]
-surface_material_override/0 = ExtResource("7_pillarcel")
-
-[node name="pillar_stone_1" parent="pillar_stone_2" unique_id=949757288 instance=ExtResource("5_6helt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0066576004, 0, 2.824864)
-
-[editable path="pillar_stone_2/pillar_stone_1"]
-
-[node name="pillar_1" parent="pillar_stone_2/pillar_stone_1" index="0"]
+[node name="pillar_1" parent="pillar_stone_2" index="0" unique_id=2090781254]
 surface_material_override/0 = ExtResource("7_pillarcel")
 
 [node name="crate_wood_1" parent="." unique_id=2006013783 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8356395, 0, -6.875702)
 
+[node name="crate_wood_1_complete" parent="crate_wood_1" index="0"]
+surface_material_override/0 = ExtResource("16_cwalls")
+surface_material_override/1 = ExtResource("17_cribs")
+surface_material_override/2 = ExtResource("18_ccorners")
+
 [node name="crate_wood_2" parent="." unique_id=930408642 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.40798724, 0, -7.2103086)
+
+[node name="crate_wood_1_complete" parent="crate_wood_2" index="0"]
+surface_material_override/0 = ExtResource("16_cwalls")
+surface_material_override/1 = ExtResource("17_cribs")
+surface_material_override/2 = ExtResource("18_ccorners")
 
 [node name="crate_wood_3" parent="." unique_id=1085546892 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73765266, 0, -8.288818)
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="crate_wood_1_complete" parent="crate_wood_3" index="0"]
+surface_material_override/0 = ExtResource("16_cwalls")
+surface_material_override/1 = ExtResource("17_cribs")
+surface_material_override/2 = ExtResource("18_ccorners")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1239782146]
 transform = Transform3D(0, -0.5603094, 0.8282834, 0, 0.8282834, 0.5603094, -1, 0, 0, 16, 13, -1)
 fov = 35.0
 
-[node name="KeyLight" type="DirectionalLight3D" parent="."]
+[node name="KeyLight" type="DirectionalLight3D" parent="." unique_id=1838787393]
 transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 8, 0)
+light_color = Color(1, 0.97, 0.9, 1)
+light_energy = 0.85
 shadow_enabled = true
-light_energy = 1.2
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="FillLight" type="DirectionalLight3D" parent="." unique_id=583907536]
+transform = Transform3D(-0.866025, -0.17101, -0.469846, 0, 0.939693, -0.342021, 0.5, -0.296198, -0.813798, 0, 8, 0)
+light_color = Color(1, 0.91, 0.74, 1)
+light_energy = 0.45
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=831606426]
 environment = SubResource("Environment_main")
+compositor = ExtResource("40_outlinefx")
 
-[node name="FloorBody" type="StaticBody3D" parent="."]
+[node name="FloorBody" type="StaticBody3D" parent="." unique_id=936125864]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 
-[node name="FloorCol" type="CollisionShape3D" parent="FloorBody"]
+[node name="FloorCol" type="CollisionShape3D" parent="FloorBody" unique_id=1857183639]
 shape = SubResource("floor_shape")
+
+[editable path="test_floor"]
+[editable path="boss_test_model"]
+[editable path="player_base_model_male_1"]
+[editable path="barrel_wood_1"]
+[editable path="barrel_wood_2"]
+[editable path="barrel_wood_3"]
+[editable path="pillar_stone_3"]
+[editable path="pillar_stone_1"]
+[editable path="pillar_stone_4"]
+[editable path="pillar_stone_2"]
+[editable path="crate_wood_1"]
+[editable path="crate_wood_2"]
+[editable path="crate_wood_3"]
