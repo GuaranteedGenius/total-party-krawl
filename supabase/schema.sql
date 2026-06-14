@@ -1,60 +1,112 @@
--- Boss Battle MVP — Supabase PostgreSQL Schema
--- Run this in the Supabase SQL Editor to set up your database
+-- ============================================================
+-- Total Party Krawl — per-viewer seat schema (alpha "Fight Me")
+-- ------------------------------------------------------------
+-- Replaces the abandoned chat-voting model (single boss_hp/votes_json).
+-- Run this in the Supabase SQL Editor.
+--
+-- THIN RELAY model: HP / alive / round / phase columns are MIRRORS the
+-- Godot game client pushes. The server never computes combat outcomes.
+--
+-- RLS posture:
+--   * matches, seats  -> public SELECT (extension reads channel state),
+--                        all writes service-role only.
+--   * moves           -> NO public read (viewers must not see each other's
+--                        lock-ins before resolution); service-role only.
+--   * players         -> owner can read their own row; writes service-role.
+-- The service-role key bypasses RLS entirely; these policies govern the
+-- anon/authenticated keys the extension or a browser might ever hold.
+-- ============================================================
 
--- Matches table: one row per game
-CREATE TABLE IF NOT EXISTS matches (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  channel_id TEXT NOT NULL,
-  boss_name TEXT NOT NULL DEFAULT 'Chat Boss',
-  streamer_hp_start INTEGER NOT NULL DEFAULT 300,
-  boss_hp_start INTEGER NOT NULL DEFAULT 500,
-  winner TEXT CHECK (winner IN ('streamer', 'chat')),
-  turns_played INTEGER NOT NULL DEFAULT 0,
-  started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  ended_at TIMESTAMPTZ
+-- ---------- matches: one active match per channel (alpha) ----------
+create table if not exists public.matches (
+  channel_id        text primary key,
+  status            text        not null default 'active',     -- active | ended
+  current_round     integer     not null default 0,
+  phase             text        not null default 'lobby',      -- lobby | choosing | resolving | ended
+  boss_hp           integer     not null default 0,            -- mirror, client-pushed
+  boss_max_hp       integer     not null default 0,            -- mirror, client-pushed
+  boss_alive        boolean     not null default true,         -- mirror, client-pushed
+  ends_at_epoch_ms  bigint,                                    -- soft-timer hint from client
+  snapshot          jsonb,                                     -- last full /api/state payload the client published
+  updated_at        timestamptz not null default now()
 );
 
--- Index for fetching a channel's match history
-CREATE INDEX IF NOT EXISTS idx_matches_channel ON matches (channel_id, started_at DESC);
-
--- Turns table: one row per resolved turn
-CREATE TABLE IF NOT EXISTS turns (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
-  turn_number INTEGER NOT NULL,
-  boss_action TEXT NOT NULL,
-  streamer_action TEXT NOT NULL,
-  boss_hp_after INTEGER NOT NULL,
-  streamer_hp_after INTEGER NOT NULL,
-  votes_json JSONB NOT NULL DEFAULT '{}',
-  bits_used INTEGER NOT NULL DEFAULT 0,
-  resolved_at TIMESTAMPTZ NOT NULL DEFAULT now()
+-- ---------- seats: up to 10 viewer slots per channel ----------
+create table if not exists public.seats (
+  channel_id      text        not null references public.matches(channel_id) on delete cascade,
+  seat_index      integer     not null check (seat_index >= 0 and seat_index < 10),
+  opaque_user_id  text        not null,
+  class_id        text,                                        -- class.tank | class.mage | class.healer | null
+  hp              integer     not null default 0,              -- mirror, client-pushed
+  max_hp          integer     not null default 0,              -- mirror, client-pushed
+  alive           boolean     not null default true,           -- mirror, client-pushed
+  joined_at       timestamptz not null default now(),
+  primary key (channel_id, seat_index),
+  unique (channel_id, opaque_user_id)                          -- one seat per viewer per channel
 );
 
-CREATE INDEX IF NOT EXISTS idx_turns_match ON turns (match_id, turn_number);
+create index if not exists idx_seats_channel on public.seats (channel_id);
 
--- Leaderboard table: aggregate win/loss per channel
-CREATE TABLE IF NOT EXISTS leaderboard (
-  channel_id TEXT PRIMARY KEY,
-  streamer_wins INTEGER NOT NULL DEFAULT 0,
-  chat_wins INTEGER NOT NULL DEFAULT 0,
-  total_matches INTEGER NOT NULL DEFAULT 0,
-  last_played TIMESTAMPTZ NOT NULL DEFAULT now()
+-- ---------- moves: one lock-in per (channel, round, seat) ----------
+create table if not exists public.moves (
+  channel_id   text        not null,
+  round        integer     not null,
+  seat_index   integer     not null,
+  move_id      text        not null,
+  target_id    text        not null,
+  created_at   timestamptz not null default now(),
+  primary key (channel_id, round, seat_index),                 -- re-submit upserts
+  foreign key (channel_id, seat_index)
+    references public.seats(channel_id, seat_index) on delete cascade
 );
 
--- Row Level Security (RLS) — public read, service-key write
-ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
-ALTER TABLE turns ENABLE ROW LEVEL SECURITY;
-ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
+create index if not exists idx_moves_channel_round on public.moves (channel_id, round);
 
--- Allow anyone to read (viewers need to see leaderboard)
-CREATE POLICY "Public read matches" ON matches FOR SELECT USING (true);
-CREATE POLICY "Public read turns" ON turns FOR SELECT USING (true);
-CREATE POLICY "Public read leaderboard" ON leaderboard FOR SELECT USING (true);
+-- ---------- players: persistent per-viewer progression stub ----------
+create table if not exists public.players (
+  opaque_user_id  text        primary key,
+  display_name    text,
+  xp              integer     not null default 0,
+  level           integer     not null default 1,
+  created_at      timestamptz not null default now()
+);
 
--- Only service role can insert/update (backend writes via SUPABASE_SECRET_KEY)
-CREATE POLICY "Service insert matches" ON matches FOR INSERT WITH CHECK (auth.role() = 'service_role');
-CREATE POLICY "Service update matches" ON matches FOR UPDATE USING (auth.role() = 'service_role');
-CREATE POLICY "Service insert turns" ON turns FOR INSERT WITH CHECK (auth.role() = 'service_role');
-CREATE POLICY "Service insert leaderboard" ON leaderboard FOR INSERT WITH CHECK (auth.role() = 'service_role');
-CREATE POLICY "Service update leaderboard" ON leaderboard FOR UPDATE USING (auth.role() = 'service_role');
+-- ============================================================
+-- Row Level Security
+-- ============================================================
+alter table public.matches enable row level security;
+alter table public.seats   enable row level security;
+alter table public.moves   enable row level security;
+alter table public.players enable row level security;
+
+-- matches: public read, service-role write
+drop policy if exists "matches public read"      on public.matches;
+drop policy if exists "matches service write"     on public.matches;
+create policy "matches public read"  on public.matches
+  for select using (true);
+create policy "matches service write" on public.matches
+  for all to service_role using (true) with check (true);
+
+-- seats: public read, service-role write
+drop policy if exists "seats public read"   on public.seats;
+drop policy if exists "seats service write"  on public.seats;
+create policy "seats public read"  on public.seats
+  for select using (true);
+create policy "seats service write" on public.seats
+  for all to service_role using (true) with check (true);
+
+-- moves: NO public read; service-role only (read + write)
+drop policy if exists "moves service all" on public.moves;
+create policy "moves service all" on public.moves
+  for all to service_role using (true) with check (true);
+
+-- players: owner reads own row, service-role writes.
+-- "owner" = a request whose JWT 'sub' equals opaque_user_id. The extension
+-- never holds such a JWT today (all reads go through service-role functions),
+-- but this future-proofs a direct owner read if we ever add one.
+drop policy if exists "players owner read"   on public.players;
+drop policy if exists "players service write" on public.players;
+create policy "players owner read" on public.players
+  for select using (auth.jwt() ->> 'sub' = opaque_user_id);
+create policy "players service write" on public.players
+  for all to service_role using (true) with check (true);

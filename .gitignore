@@ -25,8 +25,8 @@ bin/
 obj/
 [Tt]est[Rr]esults/
 
-# scratch screenshots / dev artifacts
-dev/
+# scratch screenshots / dev artifacts (repo root only; keep extension/dev mock harness)
+/dev/
 
 # Editor
 .vscode/

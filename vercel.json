@@ -8,6 +8,11 @@
   "outputDirectory": ".",
   "framework": null,
   "devCommand": "",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@3.0.26"
+    }
+  },
   "headers": [
     {
       "source": "/api/(.*)",
