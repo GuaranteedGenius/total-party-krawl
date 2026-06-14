@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TPK Panel — DEV MOCK</title>
+  <!-- NO Twitch CDN script here: mock.js stubs window.Twitch.ext entirely.
+       mock.js MUST load FIRST so it installs the fetch + Twitch stubs before any
+       panel script runs. This file is DEV ONLY and must not be uploaded to Twitch. -->
+  <script src="mock.js"></script>
+  <link rel="stylesheet" href="../css/panel.css" />
+  <style>
+    body { display: flex; gap: 20px; align-items: flex-start; padding: 16px; }
+    .mock-side { flex: 1; max-width: 480px; }
+    .mock-panel { width: 340px; border: 1px solid #2c2440; border-radius: 12px; }
+    .mock-controls button {
+      margin: 0 6px 6px 0; padding: 6px 10px; border-radius: 7px; border: none;
+      background: #271f3d; color: #ece8f5; cursor: pointer;
+    }
+    #mock-log {
+      white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 11px;
+      background: #0d0a16; color: #9be7c4; padding: 10px; border-radius: 8px;
+      height: 360px; overflow: auto; margin-top: 8px;
+    }
+    .mock-banner { background:#ff7847; color:#1b0f2b; font-weight:700; padding:6px 10px; border-radius:7px; margin-bottom:10px; }
+  </style>
+</head>
+<body>
+  <div class="mock-panel">
+    <!-- The real panel markup, inlined so the panel scripts run against it.
+         Kept in sync with panel.html. -->
+    <div class="wrap">
+      <h1 class="title">Total Party Krawl</h1>
+      <p class="subtitle">Join the fight. Pick a class. Lock in your move.</p>
+      <div id="status-line" class="status">Connecting…</div>
+
+      <section id="join-section" class="card">
+        <div class="card__head">Join the party</div>
+        <button id="join-btn" class="btn" type="button">Take a seat</button>
+      </section>
+
+      <section id="class-section" class="card hidden">
+        <div class="card__head">Choose your class</div>
+        <div id="class-choices" class="class-choices"></div>
+      </section>
+
+      <section id="play-section" class="hidden">
+        <div id="timer" class="timer">Waiting for the match to start…</div>
+        <div id="waiting-line" class="waiting hidden"></div>
+
+        <div class="card">
+          <div class="card__head">Your move</div>
+          <div id="move-list" class="move-list"></div>
+          <div id="target-label" class="target-label"></div>
+          <div id="target-list" class="target-list"></div>
+          <button id="submit-btn" class="btn" type="button" disabled>Lock in move</button>
+        </div>
+
+        <div class="card">
+          <div class="card__head">You</div>
+          <div class="readout">
+            <div class="stat-row"><span class="label" id="you-seat">—</span><span id="you-class">—</span></div>
+            <div class="hp-bar" id="you-hp-bar"><div class="hp-bar__fill"></div></div>
+            <div class="stat-row"><span class="label">HP</span><span id="you-hp">—</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__head">The Boss</div>
+          <div class="hp-bar boss" id="boss-hp-bar"><div class="hp-bar__fill"></div></div>
+          <div class="stat-row"><span class="label">HP</span><span id="boss-hp">—</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card__head">Party</div>
+          <ul id="party-list" class="party-list"></ul>
+        </div>
+      </section>
+
+      <p class="footnote">Timer is a guide — the game owns the real clock.</p>
+    </div>
+  </div>
+
+  <div class="mock-side">
+    <div class="mock-banner">DEV MOCK — not the real Twitch panel</div>
+    <div class="mock-controls">
+      <button onclick="MOCK.nextRound()">Advance round</button>
+      <button onclick="MOCK.damageMe(20)">Damage me 20</button>
+      <button onclick="MOCK.winNow()">Win now</button>
+    </div>
+    <div id="mock-log"></div>
+  </div>
+
+  <!-- Panel scripts load AFTER mock.js. Paths are relative to extension/dev/. -->
+  <script src="../js/config.js"></script>
+  <script src="../js/content.js"></script>
+  <script src="../js/twitch-auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Total Party Krawl</title>
+  <!-- Twitch Extension Helper SDK. Required by Twitch; must be loaded from their CDN.
+       No Subresource Integrity hash: Twitch revs this file without publishing pinned
+       hashes and the review process expects the exact unpinned tag — pinning would
+       break the extension on their next update. In the dev mock this tag is removed
+       and window.Twitch.ext is stubbed instead. -->
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  <!-- All other assets are RELATIVE (Twitch hosts the zip contents). -->
+  <link rel="stylesheet" href="css/panel.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="title">Total Party Krawl</h1>
+    <p class="subtitle">Join the fight. Pick a class. Lock in your move.</p>
+
+    <div id="status-line" class="status">Connecting…</div>
+
+    <!-- 1. JOIN -->
+    <section id="join-section" class="card">
+      <div class="card__head">Join the party</div>
+      <button id="join-btn" class="btn" type="button">Take a seat</button>
+    </section>
+
+    <!-- 2. PICK CLASS -->
+    <section id="class-section" class="card hidden">
+      <div class="card__head">Choose your class</div>
+      <div id="class-choices" class="class-choices"></div>
+    </section>
+
+    <!-- 3. PLAY -->
+    <section id="play-section" class="hidden">
+      <div id="timer" class="timer">Waiting for the match to start…</div>
+      <div id="waiting-line" class="waiting hidden"></div>
+
+      <div class="card">
+        <div class="card__head">Your move</div>
+        <div id="move-list" class="move-list"></div>
+        <div id="target-label" class="target-label"></div>
+        <div id="target-list" class="target-list"></div>
+        <button id="submit-btn" class="btn" type="button" disabled>Lock in move</button>
+      </div>
+
+      <div class="card">
+        <div class="card__head">You</div>
+        <div class="readout">
+          <div class="stat-row"><span class="label" id="you-seat">—</span><span id="you-class">—</span></div>
+          <div class="hp-bar" id="you-hp-bar"><div class="hp-bar__fill"></div></div>
+          <div class="stat-row"><span class="label">HP</span><span id="you-hp">—</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">The Boss</div>
+        <div class="hp-bar boss" id="boss-hp-bar"><div class="hp-bar__fill"></div></div>
+        <div class="stat-row"><span class="label">HP</span><span id="boss-hp">—</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">Party</div>
+        <ul id="party-list" class="party-list"></ul>
+      </div>
+    </section>
+
+    <p class="footnote">Timer is a guide — the game owns the real clock.</p>
+  </div>
+
+  <!-- Load order matters: config → content → auth → api → panel. -->
+  <script src="js/config.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/twitch-auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/panel.js"></script>
+</body>
+</html>
