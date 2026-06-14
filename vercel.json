@@ -1,16 +1,13 @@
 {
   "version": 2,
+  "git": {
+    "deploymentEnabled": false
+  },
   "installCommand": "npm install",
   "buildCommand": "",
   "outputDirectory": ".",
   "framework": null,
   "devCommand": "",
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 256,
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",

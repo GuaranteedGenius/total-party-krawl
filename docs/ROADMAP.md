@@ -45,6 +45,11 @@ join via the Twitch extension and fight the streamer-controlled boss in turn-bas
 - [ ] One overlay layout (Full Screen) wired; facecam variants later
 
 ### Milestone C — Backend relay  · backend-relay-engineer
+> Note: Vercel auto-deploy is currently DISABLED via `vercel.json` (`git.deploymentEnabled: false`)
+> so pushes don't trigger paid builds. The old `boss-battle` project linkage and the abandoned
+> chat-voting model (`lib/supabase.ts`, `supabase/schema.sql`) are still present. When building the
+> backend: re-enable deploys (`git.deploymentEnabled: true`), restore the `functions` block in
+> `vercel.json` for the real `api/**/*.ts`, and replace the abandoned model with the per-viewer one.
 - [ ] Replace the abandoned chat-voting `supabase/schema.sql` with the per-viewer seat model
 - [ ] Supabase Realtime: broadcast turn prompt → relay viewer moves back to the client
 - [ ] Twitch JWT verification + Vercel endpoints (join seat, submit move)
