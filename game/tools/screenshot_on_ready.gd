@@ -16,6 +16,18 @@ func _ready() -> void:
 		ev.pressed = true
 		Input.parse_input_event(ev)
 		await get_tree().create_timer(1.6).timeout
+	# Optional: fire a left-click to launch the wrecking ball, then let it fly
+	# and the scenery settle before capturing. Gated on TPK_AUTOFIRE.
+	if OS.get_environment("TPK_AUTOFIRE") != "":
+		var down := InputEventMouseButton.new()
+		down.button_index = MOUSE_BUTTON_LEFT
+		down.pressed = true
+		Input.parse_input_event(down)
+		var up := InputEventMouseButton.new()
+		up.button_index = MOUSE_BUTTON_LEFT
+		up.pressed = false
+		Input.parse_input_event(up)
+		await get_tree().create_timer(1.6).timeout
 	var img := get_viewport().get_texture().get_image()
 	var err := img.save_png(out_path)
 	if err != OK:

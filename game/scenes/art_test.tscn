@@ -42,6 +42,8 @@
 [ext_resource type="Compositor" uid="uid://gpy3r0mtdagu" path="res://materials/outline_compositor.tres" id="40_outlinefx"]
 [ext_resource type="PackedScene" uid="uid://dniyiym682nom" path="res://assets/barrel_wood_1_fragments.glb" id="41_brfrag"]
 [ext_resource type="PackedScene" uid="uid://cvp5dhfyg5lsr" path="res://assets/pillar_stone_1_fragments.glb" id="42_plfrag"]
+[ext_resource type="Script" uid="uid://bqo5kl5uw6xq6" path="res://scripts/Shatterable.cs" id="43_shatter"]
+[ext_resource type="Script" uid="uid://bouijhl1rqqck" path="res://scripts/BallLauncher.cs" id="44_ball"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
@@ -58,9 +60,6 @@ size = Vector3(40, 0.2, 40)
 
 [node name="Node3D" type="Node3D" unique_id=832495262]
 script = ExtResource("8_destruct")
-BarrelFragments = ExtResource("41_brfrag")
-CrateFragments = ExtResource("9_crfrag")
-PillarFragments = ExtResource("42_plfrag")
 
 [node name="test_floor" parent="." unique_id=192076484 instance=ExtResource("1_t76u2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -1)
@@ -114,6 +113,10 @@ surface_material_override/0 = ExtResource("13_bplanks")
 surface_material_override/1 = ExtResource("14_brings")
 surface_material_override/2 = ExtResource("15_btops")
 
+[node name="Shatterable" type="Node3D" parent="barrel_wood_1"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("41_brfrag")
+
 [node name="barrel_wood_2" parent="." unique_id=1689874826 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1882024, 0, 1.3698926)
 
@@ -121,6 +124,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1882024, 0, 1.3698926)
 surface_material_override/0 = ExtResource("13_bplanks")
 surface_material_override/1 = ExtResource("14_brings")
 surface_material_override/2 = ExtResource("15_btops")
+
+[node name="Shatterable" type="Node3D" parent="barrel_wood_2"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("41_brfrag")
 
 [node name="barrel_wood_3" parent="." unique_id=1755746289 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7831006, 0, 2.500573)
@@ -130,6 +137,10 @@ surface_material_override/0 = ExtResource("13_bplanks")
 surface_material_override/1 = ExtResource("14_brings")
 surface_material_override/2 = ExtResource("15_btops")
 
+[node name="Shatterable" type="Node3D" parent="barrel_wood_3"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("41_brfrag")
+
 [node name="pillar_stone_3" parent="." unique_id=1027736767 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -3)
 
@@ -137,11 +148,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -3)
 skeleton = NodePath("../../pillar_stone_3")
 surface_material_override/0 = ExtResource("7_pillarcel")
 
+[node name="Shatterable" type="Node3D" parent="pillar_stone_3"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("42_plfrag")
+
 [node name="pillar_stone_1" parent="." unique_id=2081804453 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -5)
 
 [node name="pillar_1" parent="pillar_stone_1" index="0" unique_id=2090781254]
 surface_material_override/0 = ExtResource("7_pillarcel")
+
+[node name="Shatterable" type="Node3D" parent="pillar_stone_1"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("42_plfrag")
 
 [node name="pillar_stone_4" parent="." unique_id=949757288 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -9)
@@ -151,11 +170,19 @@ transform = Transform3D(0.49492478, 0, 0, 0, 1.5342438, 0, 0, 0, 0.49492478, -0.
 skeleton = NodePath("../../pillar_stone_4")
 surface_material_override/0 = ExtResource("7_pillarcel")
 
+[node name="Shatterable" type="Node3D" parent="pillar_stone_4"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("42_plfrag")
+
 [node name="pillar_stone_2" parent="." unique_id=1295413452 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -7)
 
 [node name="pillar_1" parent="pillar_stone_2" index="0" unique_id=2090781254]
 surface_material_override/0 = ExtResource("7_pillarcel")
+
+[node name="Shatterable" type="Node3D" parent="pillar_stone_2"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("42_plfrag")
 
 [node name="crate_wood_1" parent="." unique_id=2006013783 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8356395, 0, -6.875702)
@@ -165,6 +192,10 @@ surface_material_override/0 = ExtResource("16_cwalls")
 surface_material_override/1 = ExtResource("17_cribs")
 surface_material_override/2 = ExtResource("18_ccorners")
 
+[node name="Shatterable" type="Node3D" parent="crate_wood_1"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("9_crfrag")
+
 [node name="crate_wood_2" parent="." unique_id=930408642 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.40798724, 0, -7.2103086)
 
@@ -173,6 +204,10 @@ surface_material_override/0 = ExtResource("16_cwalls")
 surface_material_override/1 = ExtResource("17_cribs")
 surface_material_override/2 = ExtResource("18_ccorners")
 
+[node name="Shatterable" type="Node3D" parent="crate_wood_2"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("9_crfrag")
+
 [node name="crate_wood_3" parent="." unique_id=1085546892 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73765266, 0, -8.288818)
 
@@ -180,6 +215,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73765266, 0, -8.288818)
 surface_material_override/0 = ExtResource("16_cwalls")
 surface_material_override/1 = ExtResource("17_cribs")
 surface_material_override/2 = ExtResource("18_ccorners")
+
+[node name="Shatterable" type="Node3D" parent="crate_wood_3"]
+script = ExtResource("43_shatter")
+Fragments = ExtResource("9_crfrag")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1239782146]
 transform = Transform3D(0, -0.5603094, 0.8282834, 0, 0.8282834, 0.5603094, -1, 0, 0, 16, 13, -1)
@@ -205,6 +244,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 
 [node name="FloorCol" type="CollisionShape3D" parent="FloorBody" unique_id=1857183639]
 shape = SubResource("floor_shape")
+
+[node name="BallLauncher" type="Node3D" parent="."]
+script = ExtResource("44_ball")
+PlayerPath = NodePath("../player_base_model_male_1")
+BossPath = NodePath("../boss_test_model")
 
 [editable path="test_floor"]
 [editable path="boss_test_model"]
