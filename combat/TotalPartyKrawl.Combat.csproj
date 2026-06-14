@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>TotalPartyKrawl.Combat</RootNamespace>
+    <AssemblyName>TotalPartyKrawl.Combat</AssemblyName>
+  </PropertyGroup>
+
+  <!-- The test project lives under tests/; keep it out of the library compile. -->
+  <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+  </ItemGroup>
+</Project>

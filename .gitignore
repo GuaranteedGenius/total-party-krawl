@@ -20,6 +20,11 @@ extension.zip
 .game-store.json
 .superpowers/
 
+# .NET build output
+bin/
+obj/
+[Tt]est[Rr]esults/
+
 # Editor
 .vscode/
 

@@ -3,4 +3,10 @@
     <TargetFramework>net10.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+
+  <!-- Pure-C# combat library (no Godot dependency). The Resource wrappers in
+       game/scripts/combat convert authored .tres into the library's plain DTOs. -->
+  <ItemGroup>
+    <ProjectReference Include="..\combat\TotalPartyKrawl.Combat.csproj" />
+  </ItemGroup>
 </Project>

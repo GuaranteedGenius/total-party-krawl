@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 ScreenshotOnReady="*res://tools/screenshot_on_ready.gd"
+CombatSimRunner="*res://scripts/combat/CombatSimRunner.cs"
 
 [dotnet]
 
