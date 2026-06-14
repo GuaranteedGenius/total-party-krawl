@@ -5,14 +5,25 @@
 > [`docs/superpowers/specs/`](superpowers/specs/); implementation plans in
 > [`docs/superpowers/plans/`](superpowers/plans/).
 
-## Where we are now
+## Where we are now (updated 2026-06-14)
 
-- **Done:** Agent/skill/hook team scaffolded. Art pipeline working on `game/scenes/art_test.tscn`
-  — cel materials on all props, **screen-space color-tinted outlines** (CompositorEffect), warm
-  lighting, calmer stone. Destruction test working: Space shatters all destructibles (barrels,
-  crates, pillars) into Jolt-driven fragments. Verified live in-engine.
-- **Status:** This is a **visual + physics prototype**. There is no game loop, no Twitch
-  extension, and no backend yet. "Alpha" below = building the thin vertical slice of the real game.
+- **Art + destruction:** cel materials + screen-space color-tinted outlines + warm lighting;
+  data-driven `Shatterable` component with hidden HP + distance-falloff explosion damage; click-to-fire
+  ball. Verified in-engine (Godot 4.6.2).
+- **Milestone A — DONE:** combat core. Pure-C# library (`combat/`) — 4-stat formulas, DEX-order
+  rounds, taunt/dodge/AOE, 3 classes + The Warden, bots, headless sim. 41 xUnit tests incl. the spec
+  oracle. Verified: `dotnet test` 41/41, sim "Won in 14 rounds".
+- **Milestone B — DONE:** `game/scenes/combat.tscn` renders a full auto-played fight with HP bars,
+  floating damage/heal/DODGE/TAUNT text, animated resolution, and a win/lose banner (existing models).
+- **Milestone C — CODE DONE (not deployed):** per-viewer Supabase schema + Vercel relay endpoints
+  (`api/`, `lib/`), Twitch JWT verify, 27 tests green. Needs human: Supabase/Twitch/Vercel secrets.
+- **Milestone D — CODE DONE (not uploaded):** Twitch extension viewer panel (`extension/`) + mock
+  harness (31 checks). Needs human: Twitch developer-console registration + secret + asset upload.
+- **Interface:** [`docs/api-contract.md`](api-contract.md) ties the three components together.
+- **Remaining gates (need the human):** (1) **art/meshes** — rigged class meshes + idle/attack/cast/
+  death animations (characters are T-posed), distinct class models, boss scale; (2) **external setup**
+  — Supabase + Twitch + Vercel accounts/secrets to deploy & test C/D live; (3) wire the Godot client
+  to the live relay (real viewer input), then (4) the **live playtest**.
 
 ## Alpha goal
 
