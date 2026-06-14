@@ -14,6 +14,15 @@ public sealed class CombatEngine
 
     public CombatState State { get; }
 
+    private readonly List<ActionResult> _lastRoundResults = new();
+
+    /// <summary>
+    /// Ordered structured outcomes of the most recent <see cref="ResolveRound"/>
+    /// call, in initiative order (spec §1.7). The view layer animates these one at
+    /// a time. Replaced at the start of each <see cref="ResolveRound"/>.
+    /// </summary>
+    public IReadOnlyList<ActionResult> LastRoundResults => _lastRoundResults;
+
     public CombatEngine(
         CombatState state,
         IReadOnlyDictionary<string, MoveDef> moves,
@@ -98,6 +107,7 @@ public sealed class CombatEngine
     public Phase ResolveRound()
     {
         State.Phase = Phase.Resolve;
+        _lastRoundResults.Clear();
 
         // §1.7 — initiative over ALL combatants (dead are skipped at act time).
         var order = CombatMath.InitiativeOrder(State.Combatants);
@@ -119,11 +129,17 @@ public sealed class CombatEngine
 
     private void ResolveAction(Combatant actor)
     {
-        var (move, target) = ResolveMoveAndTarget(actor);
+        var (move, target, redirected) = ResolveMoveAndTarget(actor);
 
         if (move is null)
         {
             Log($"{Name(actor)} has no valid action and skips.");
+            _lastRoundResults.Add(new ActionResult
+            {
+                ActorId = actor.Id, MoveId = string.Empty, MoveName = "Skip",
+                TargetId = actor.Id, Kind = ActionResultKind.Skip,
+                TargetHpAfter = actor.CurrentHp, TargetMaxHp = actor.MaxHp,
+            });
             return;
         }
 
@@ -134,7 +150,7 @@ public sealed class CombatEngine
                 if (move.Target == TargetRule.EnemyAll)
                     ResolveAoeDamage(actor, move);
                 else
-                    ResolveSingleDamage(actor, move, target!);
+                    ResolveSingleDamage(actor, move, target!, redirected);
                 break;
 
             case EffectKind.Heal:
@@ -163,7 +179,7 @@ public sealed class CombatEngine
     /// taunt redirect (§3.2), and dead-target retargeting (§6.9).
     /// Returns (null, null) if the actor should skip.
     /// </summary>
-    private (MoveDef? move, Combatant? target) ResolveMoveAndTarget(Combatant actor)
+    private (MoveDef? move, Combatant? target, bool redirected) ResolveMoveAndTarget(Combatant actor)
     {
         MoveDef? move = null;
 
@@ -199,10 +215,25 @@ public sealed class CombatEngine
             }
 
             if (NeedsTarget(move) && target is null)
-                return (null, null); // degenerate state → skip (§2.3).
+                return (null, null, false); // degenerate state → skip (§2.3).
         }
 
-        return (move, target);
+        // §3.2 — a boss single-target attack landing on a living taunting Tank is a
+        // redirect (the view shows the hit pulled onto the Tank). True only when the
+        // boss did NOT originally aim at the tank.
+        bool redirected = false;
+        if (actor.IsBoss && move.Target == TargetRule.EnemyOne && target is not null)
+        {
+            var boss = actor;
+            if (boss.IsTaunted
+                && target.Id == boss.TauntedByTankId
+                && boss.LockedTargetId != boss.TauntedByTankId)
+            {
+                redirected = true;
+            }
+        }
+
+        return (move, target, redirected);
     }
 
     private static bool NeedsTarget(MoveDef m) =>
@@ -282,12 +313,19 @@ public sealed class CombatEngine
 
     // ----------------------------------------------------------- effect appliers
 
-    private void ResolveSingleDamage(Combatant actor, MoveDef move, Combatant target)
+    private void ResolveSingleDamage(Combatant actor, MoveDef move, Combatant target, bool redirected)
     {
         double dodgePct = CombatMath.DodgePctRaw(actor, target, _tuning);
         if (move.IsAttack && CombatMath.RollDodge(dodgePct, _rng))
         {
             Log($"{Name(actor)} uses {move.DisplayName} on {Name(target)} — DODGED!");
+            _lastRoundResults.Add(new ActionResult
+            {
+                ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+                TargetId = target.Id, Kind = ActionResultKind.Dodge,
+                Amount = 0, WasDodged = true, WasRedirected = redirected,
+                TargetHpAfter = target.CurrentHp, TargetMaxHp = target.MaxHp,
+            });
             return; // §1.6 — dodged attack deals 0, no rider.
         }
 
@@ -297,6 +335,14 @@ public sealed class CombatEngine
 
         ApplyDamage(target, dmg);
         Log($"{Name(actor)} uses {move.DisplayName} on {Name(target)} for {dmg} ({target.CurrentHp}/{target.MaxHp}).");
+        _lastRoundResults.Add(new ActionResult
+        {
+            ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+            TargetId = target.Id, Kind = ActionResultKind.Damage,
+            Amount = dmg, WasRedirected = redirected,
+            TargetDied = !target.IsAlive,
+            TargetHpAfter = target.CurrentHp, TargetMaxHp = target.MaxHp,
+        });
     }
 
     private void ResolveAoeDamage(Combatant actor, MoveDef move)
@@ -310,6 +356,13 @@ public sealed class CombatEngine
             if (CombatMath.RollDodge(dodgePct, _rng))
             {
                 Log($"{Name(actor)} {move.DisplayName} on {Name(target)} — DODGED!");
+                _lastRoundResults.Add(new ActionResult
+                {
+                    ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+                    TargetId = target.Id, Kind = ActionResultKind.Dodge,
+                    Amount = 0, WasDodged = true,
+                    TargetHpAfter = target.CurrentHp, TargetMaxHp = target.MaxHp,
+                });
                 continue;
             }
             int dmg = move.Effect == EffectKind.PhysicalDamage
@@ -317,6 +370,13 @@ public sealed class CombatEngine
                 : CombatMath.MagicDamage(move, actor, target, _tuning);
             ApplyDamage(target, dmg);
             Log($"{Name(actor)} {move.DisplayName} hits {Name(target)} for {dmg} ({target.CurrentHp}/{target.MaxHp}).");
+            _lastRoundResults.Add(new ActionResult
+            {
+                ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+                TargetId = target.Id, Kind = ActionResultKind.Damage,
+                Amount = dmg, TargetDied = !target.IsAlive,
+                TargetHpAfter = target.CurrentHp, TargetMaxHp = target.MaxHp,
+            });
         }
     }
 
@@ -325,9 +385,17 @@ public sealed class CombatEngine
 
     private void ResolveSingleHeal(Combatant actor, MoveDef move, Combatant target)
     {
+        int before = target.CurrentHp;
         int heal = CombatMath.HealAmount(move, actor, _tuning);
         ApplyHeal(target, heal);
         Log($"{Name(actor)} heals {Name(target)} for {heal} ({target.CurrentHp}/{target.MaxHp}).");
+        _lastRoundResults.Add(new ActionResult
+        {
+            ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+            TargetId = target.Id, Kind = ActionResultKind.Heal,
+            Amount = target.CurrentHp - before, // effective heal (overheal excluded)
+            TargetHpAfter = target.CurrentHp, TargetMaxHp = target.MaxHp,
+        });
     }
 
     private void ResolveAoeHeal(Combatant actor, MoveDef move)
@@ -336,15 +404,33 @@ public sealed class CombatEngine
         // Allies of a viewer = all living viewers (incl. self).
         var allies = State.LivingViewers.ToList();
         foreach (var ally in allies)
+        {
+            int before = ally.CurrentHp;
             ApplyHeal(ally, heal);
+            _lastRoundResults.Add(new ActionResult
+            {
+                ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+                TargetId = ally.Id, Kind = ActionResultKind.Heal,
+                Amount = ally.CurrentHp - before,
+                TargetHpAfter = ally.CurrentHp, TargetMaxHp = ally.MaxHp,
+            });
+        }
         Log($"{Name(actor)} {move.DisplayName} heals the party for {heal} each.");
     }
 
     private void ResolveSelfHeal(Combatant actor, MoveDef move)
     {
+        int before = actor.CurrentHp;
         int heal = CombatMath.HealAmount(move, actor, _tuning);
         ApplyHeal(actor, heal);
         Log($"{Name(actor)} {move.DisplayName} self-heals for {heal} ({actor.CurrentHp}/{actor.MaxHp}).");
+        _lastRoundResults.Add(new ActionResult
+        {
+            ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+            TargetId = actor.Id, Kind = ActionResultKind.Heal,
+            Amount = actor.CurrentHp - before,
+            TargetHpAfter = actor.CurrentHp, TargetMaxHp = actor.MaxHp,
+        });
     }
 
     private void ResolveTaunt(Combatant actor, MoveDef move)
@@ -353,6 +439,13 @@ public sealed class CombatEngine
         boss.TauntedByTankId = actor.Id;
         boss.TauntRoundsRemaining = move.StatusRounds; // = 2 (spec §3.2)
         Log($"{Name(actor)} uses {move.DisplayName} — boss is Taunted ({move.StatusRounds} rounds).");
+        _lastRoundResults.Add(new ActionResult
+        {
+            ActorId = actor.Id, MoveId = move.Id, MoveName = move.DisplayName,
+            TargetId = boss.Id, Kind = ActionResultKind.Taunt,
+            Amount = 0,
+            TargetHpAfter = boss.CurrentHp, TargetMaxHp = boss.MaxHp,
+        });
     }
 
     private static void ApplyDamage(Combatant target, int dmg)
