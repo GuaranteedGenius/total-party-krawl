@@ -14,6 +14,10 @@ config/name="total_party_krawl"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+ScreenshotOnReady="*res://tools/screenshot_on_ready.gd"
+
 [dotnet]
 
 project/assembly_name="total_party_krawl"
@@ -21,10 +25,6 @@ project/assembly_name="total_party_krawl"
 [physics]
 
 3d/physics_engine="Jolt Physics"
-
-[autoload]
-
-ScreenshotOnReady="*res://tools/screenshot_on_ready.gd"
 
 [rendering]
 

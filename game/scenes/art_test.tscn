@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://d02qfm8m31use" path="res://assets/pillar_stone_1.glb" id="5_6helt"]
 [ext_resource type="PackedScene" uid="uid://t4a3hdf2ikir" path="res://assets/crate_wood_1.glb" id="6_0oqbn"]
 [ext_resource type="Material" path="res://materials/pillar_stone_cel.tres" id="7_pillarcel"]
+[ext_resource type="Script" path="res://scripts/DestructionTest.cs" id="8_destruct"]
+[ext_resource type="PackedScene" uid="uid://obk7vt4k8i33" path="res://assets/crate_wood_1_fragments.glb" id="9_crfrag"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
@@ -19,7 +21,13 @@ adjustment_brightness = 1.02
 adjustment_contrast = 1.08
 adjustment_saturation = 1.15
 
+[sub_resource type="BoxShape3D" id="floor_shape"]
+size = Vector3(40, 0.2, 40)
+
 [node name="Node3D" type="Node3D" unique_id=832495262]
+script = ExtResource("8_destruct")
+TargetPath = NodePath("crate_wood_1")
+FragmentsScene = ExtResource("9_crfrag")
 
 [node name="test_floor" parent="." unique_id=192076484 instance=ExtResource("1_t76u2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -1)
@@ -91,3 +99,9 @@ light_energy = 1.2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_main")
+
+[node name="FloorBody" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+
+[node name="FloorCol" type="CollisionShape3D" parent="FloorBody"]
+shape = SubResource("floor_shape")
