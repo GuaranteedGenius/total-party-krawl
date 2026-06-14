@@ -3,6 +3,10 @@ using Godot;
 // Art-test destruction proof: on the "destruct" trigger (Space), shatter every
 // Shatterable prop in the scene with a self-centered burst. The actual fragment
 // swap + physics lives in the reusable Shatterable component.
+//
+// NOTE: Space intentionally bypasses hidden health -- it calls Shatter()
+// directly so we keep an easy "nuke everything" for testing the fragment
+// system. Proximity/health-based breakage lives in BallLauncher.ApplyExplosion.
 public partial class DestructionTest : Node3D
 {
     private bool _spent;

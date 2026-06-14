@@ -10,8 +10,13 @@ public partial class BallLauncher : Node3D
     [Export] public NodePath PlayerPath;
     [Export] public NodePath BossPath;
     [Export] public float FlightTime = 0.8f;
-    [Export] public float BlastRadius = 3.0f;
     [Export] public float BallRadius = 0.35f;
+
+    // Explosion model: on impact every Shatterable takes proximity-scaled
+    // damage (squared falloff inside ExplosionRadius). It does NOT break
+    // everything in range -- only props whose hidden health is depleted.
+    [Export] public float ExplosionDamage = 480f;
+    [Export] public float ExplosionRadius = 6.0f;
 
     private readonly List<Ball> _balls = new();
 
@@ -86,17 +91,19 @@ public partial class BallLauncher : Node3D
 
     private void Detonate(Vector3 at)
     {
-        int hits = 0;
+        // ApplyExplosion self-culls by distance and only breaks props whose
+        // hidden health it depletes, so iterate the whole group and let each
+        // prop decide whether it survives.
+        int affected = 0;
         foreach (Node n in GetTree().GetNodesInGroup("shatterable"))
         {
-            if (n is Shatterable s && IsInstanceValid(s) &&
-                s.GlobalPosition.DistanceTo(at) <= BlastRadius)
+            if (n is Shatterable s && IsInstanceValid(s))
             {
-                s.Shatter(at);
-                hits++;
+                s.ApplyExplosion(at, ExplosionDamage, ExplosionRadius);
+                affected++;
             }
         }
-        GD.Print($"BallLauncher: detonation shattered {hits} props.");
+        GD.Print($"BallLauncher: detonation applied to {affected} props.");
     }
 
     private class Ball

@@ -116,6 +116,7 @@ surface_material_override/2 = ExtResource("15_btops")
 [node name="Shatterable" type="Node3D" parent="barrel_wood_1"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("41_brfrag")
+MaxHealth = 35.0
 
 [node name="barrel_wood_2" parent="." unique_id=1689874826 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1882024, 0, 1.3698926)
@@ -128,6 +129,7 @@ surface_material_override/2 = ExtResource("15_btops")
 [node name="Shatterable" type="Node3D" parent="barrel_wood_2"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("41_brfrag")
+MaxHealth = 35.0
 
 [node name="barrel_wood_3" parent="." unique_id=1755746289 instance=ExtResource("4_qjkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7831006, 0, 2.500573)
@@ -140,6 +142,7 @@ surface_material_override/2 = ExtResource("15_btops")
 [node name="Shatterable" type="Node3D" parent="barrel_wood_3"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("41_brfrag")
+MaxHealth = 35.0
 
 [node name="pillar_stone_3" parent="." unique_id=1027736767 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -3)
@@ -151,6 +154,7 @@ surface_material_override/0 = ExtResource("7_pillarcel")
 [node name="Shatterable" type="Node3D" parent="pillar_stone_3"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("42_plfrag")
+MaxHealth = 160.0
 
 [node name="pillar_stone_1" parent="." unique_id=2081804453 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -5)
@@ -161,6 +165,7 @@ surface_material_override/0 = ExtResource("7_pillarcel")
 [node name="Shatterable" type="Node3D" parent="pillar_stone_1"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("42_plfrag")
+MaxHealth = 160.0
 
 [node name="pillar_stone_4" parent="." unique_id=949757288 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -9)
@@ -173,6 +178,7 @@ surface_material_override/0 = ExtResource("7_pillarcel")
 [node name="Shatterable" type="Node3D" parent="pillar_stone_4"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("42_plfrag")
+MaxHealth = 160.0
 
 [node name="pillar_stone_2" parent="." unique_id=1295413452 instance=ExtResource("5_6helt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -7)
@@ -183,6 +189,7 @@ surface_material_override/0 = ExtResource("7_pillarcel")
 [node name="Shatterable" type="Node3D" parent="pillar_stone_2"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("42_plfrag")
+MaxHealth = 160.0
 
 [node name="crate_wood_1" parent="." unique_id=2006013783 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8356395, 0, -6.875702)
@@ -195,6 +202,7 @@ surface_material_override/2 = ExtResource("18_ccorners")
 [node name="Shatterable" type="Node3D" parent="crate_wood_1"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("9_crfrag")
+MaxHealth = 70.0
 
 [node name="crate_wood_2" parent="." unique_id=930408642 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.40798724, 0, -7.2103086)
@@ -207,6 +215,7 @@ surface_material_override/2 = ExtResource("18_ccorners")
 [node name="Shatterable" type="Node3D" parent="crate_wood_2"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("9_crfrag")
+MaxHealth = 70.0
 
 [node name="crate_wood_3" parent="." unique_id=1085546892 instance=ExtResource("6_0oqbn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73765266, 0, -8.288818)
@@ -219,6 +228,7 @@ surface_material_override/2 = ExtResource("18_ccorners")
 [node name="Shatterable" type="Node3D" parent="crate_wood_3"]
 script = ExtResource("43_shatter")
 Fragments = ExtResource("9_crfrag")
+MaxHealth = 70.0
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1239782146]
 transform = Transform3D(0, -0.5603094, 0.8282834, 0, 0.8282834, 0.5603094, -1, 0, 0, 16, 13, -1)
