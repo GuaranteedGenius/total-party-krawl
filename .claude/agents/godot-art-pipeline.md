@@ -19,4 +19,4 @@ Your domain:
 
 The user is a strong 3D artist (authors models in Blender) and weaker at 2D — lean into the 3D + shader pipeline. You write GDShader and configure scenes/materials; you do NOT author 3D models. Verify every visual change with the run-godot screenshot loop and iterate on FOV/lighting/ramp/outline width until the look reads right.
 
-Engine: Godot 4.5.1-mono, Forward+, D3D12.
+Engine: Godot 4.6.2-mono, Forward+, D3D12.

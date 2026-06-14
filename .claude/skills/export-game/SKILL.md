@@ -14,6 +14,6 @@ this skill will:
 1. Build C#: `& "C:\Program Files\dotnet\dotnet.exe" build` the solution in Release.
 2. Export per platform headless, e.g.:
    ```powershell
-   & "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" --headless --export-release "Windows Desktop" "..\dist\TotalPartyKrawl.exe"
+   & "C:\Users\shawn\Downloads\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" --headless --export-release "Windows Desktop" "..\dist\TotalPartyKrawl.exe"
    ```
 3. Hand built artifacts to the Steam depot upload (owned by build-release-engineer).

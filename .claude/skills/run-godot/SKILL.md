@@ -1,6 +1,6 @@
 ---
 name: run-godot
-description: Launch a Godot scene on the installed 4.5.1-mono binary and capture a screenshot for visual verification. Use whenever you need to see the game render — confirming the art look, lighting, shaders, or a destruction test.
+description: Launch a Godot scene on the installed 4.6.2-mono binary and capture a screenshot for visual verification. Use whenever you need to see the game render — confirming the art look, lighting, shaders, or a destruction test.
 ---
 
 # run-godot
@@ -8,7 +8,10 @@ description: Launch a Godot scene on the installed 4.5.1-mono binary and capture
 Runs a Godot scene and writes a screenshot so visual changes can be verified.
 
 ## Binary
-`C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe`
+`C:\Users\shawn\Downloads\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe`
+
+(Project targets Godot 4.6.2 — `project.godot` feature flag + `total_party_krawl.csproj` SDK. The
+binary currently lives under Downloads; if it's moved to e.g. `C:\Program Files\`, update this path.)
 
 ## How it works
 The project autoloads `res://tools/screenshot_on_ready.gd`. When the `TPK_SCREENSHOT`
@@ -20,7 +23,7 @@ normally.
 ```powershell
 $env:TPK_SCREENSHOT = "E:\repos\twitch\total-party-krawl\game\.run\art_test.png"
 New-Item -ItemType Directory -Force "E:\repos\twitch\total-party-krawl\game\.run" | Out-Null
-& "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
+& "C:\Users\shawn\Downloads\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
 Remove-Item Env:\TPK_SCREENSHOT
 ```
 
@@ -33,7 +36,7 @@ scene loads, wait ~1.6s for Jolt to scatter and settle the fragments, then scree
 ```powershell
 $env:TPK_SCREENSHOT = "E:\repos\twitch\total-party-krawl\game\.run\destruction.png"
 $env:TPK_DESTRUCT = "1"
-& "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
+& "C:\Users\shawn\Downloads\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe" --path "E:\repos\twitch\total-party-krawl\game" "res://scenes/art_test.tscn"
 Remove-Item Env:\TPK_SCREENSHOT
 Remove-Item Env:\TPK_DESTRUCT
 ```
@@ -43,7 +46,7 @@ A plain run (`godot --path … scene`) does NOT reimport changed source resource
 cached import in `.godot/`. Edits to `.glsl` compute shaders, `.gdshader` files, or GLB import
 settings will silently run STALE until you force a reimport pass:
 ```powershell
-& "C:\Program Files\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe" --headless --import --path "E:\repos\twitch\total-party-krawl\game"
+& "C:\Users\shawn\Downloads\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe" --headless --import --path "E:\repos\twitch\total-party-krawl\game"
 ```
 Run this BEFORE the screenshot launch whenever a shader/asset changed. (`.gd`/`.cs` scripts load
 at runtime and do NOT need this; `.tscn`/`.tres` are read fresh too.) Keep shader source ASCII —

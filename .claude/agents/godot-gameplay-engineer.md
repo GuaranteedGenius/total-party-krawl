@@ -18,4 +18,4 @@ Your domain:
 - Class system (Tank/Mage/Healer at launch) and boss/enemy archetypes — all data-driven.
 - Scene/node architecture, input handling, Jolt physics integration.
 
-Engine: Godot 4.5.1-mono, C#/.NET 10, Jolt Physics, D3D12. Use C# for game scripts. Verify changes by running scenes via the run-godot skill. Write C# unit tests for pure combat logic where practical (resolution order, damage formulas). Follow existing patterns in game/scripts and game/scenes.
+Engine: Godot 4.6.2-mono, C#/.NET 10, Jolt Physics, D3D12. Use C# for game scripts. Verify changes by running scenes via the run-godot skill. Write C# unit tests for pure combat logic where practical (resolution order, damage formulas). Follow existing patterns in game/scripts and game/scenes.

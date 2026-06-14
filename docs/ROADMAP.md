@@ -82,8 +82,8 @@ Small items to finish the prototype and put the destruction system in its real f
 - [ ] Refactor destruction into a reusable `Shatterable` component (see Systems notes) so adding a
       breakable is pure data, not a code edit.
 - [ ] Build the click-to-fire ball (left-click → ball arcs to boss → AOE shatter). Designed but not built.
-- [ ] Reconcile engine version: `project.godot` feature flag vs installed binary / the `run-godot`
-      skill path (currently references Godot 4.5.1).
+- [x] Reconcile engine version: project is on **Godot 4.6.2** (`project.godot` + `.csproj` SDK);
+      `run-godot`/`export-game` skills and Godot agent prompts updated to the 4.6.2 binary.
 
 ---
 
