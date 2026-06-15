@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dpa1rtwitch0pair"]
+
+[ext_resource type="Script" path="res://scripts/net/PairController.cs" id="1_pair"]
+
+[node name="Pair" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_pair")
