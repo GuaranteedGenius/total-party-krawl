@@ -19,7 +19,18 @@ export interface ViewerIdentity {
   role: string;
 }
 
-export type MatchPhase = 'lobby' | 'choosing' | 'resolving' | 'ended';
+// Phase is authored by the game client (it owns the combat state machine); the
+// relay only stores/echoes the string it is given. The union documents the
+// values the client is known to send across the alpha modes — `lockin` is the
+// submissions-open phase the host publish path uses to trigger a `prompt` event.
+export type MatchPhase =
+  | 'lobby'
+  | 'choosing'
+  | 'lockin'
+  | 'resolving'
+  | 'won'
+  | 'lost'
+  | 'ended';
 export type ClassId = 'class.tank' | 'class.mage' | 'class.healer';
 
 // ----- DB row shapes (mirror supabase/schema.sql) -----
@@ -97,4 +108,62 @@ export type RealtimeMoveEvent = {
   round: number;
   moveId: string;
   targetId: string;
+};
+
+// ----- Host (broadcaster) auth & publish -----
+
+/**
+ * Verified host (broadcaster) identity carried by a host-session JWT. A
+ * broadcaster's channel id IS their Twitch user id, so `channelId` is the
+ * authoritative match key the token is scoped to.
+ */
+export interface HostIdentity {
+  channelId: string;
+}
+
+/** Result of validating a Twitch user access token against id.twitch.tv. */
+export interface TwitchTokenInfo {
+  userId: string;
+  login: string;
+  clientId: string;
+  scopes: string[];
+  expiresIn: number;
+}
+
+/** Boss mirror in a host publish (client-computed; relay stores verbatim). */
+export interface HostPublishBoss {
+  hp: number;
+  maxHp: number;
+  alive: boolean;
+}
+
+/** A seat mirror in a host publish (client-computed; relay stores verbatim). */
+export interface HostPublishSeat {
+  seatIndex: number;
+  hp: number;
+  maxHp: number;
+  alive: boolean;
+  classId: ClassId | null;
+}
+
+/**
+ * Authoritative state the game client publishes each round. Every field is a
+ * MIRROR the client computed — the relay never derives or validates combat.
+ */
+export interface HostPublishPayload {
+  /** Optional explicit channel; if present it MUST equal the token's channel. */
+  channelId?: string;
+  round: number;
+  phase: MatchPhase;
+  endsAtEpochMs?: number | null;
+  boss: HostPublishBoss;
+  seats: HostPublishSeat[];
+  /** Optional full per-channel snapshot the client wants /api/state to serve. */
+  snapshot?: StateSnapshot | null;
+}
+
+/** `prompt` Realtime event payload (non-sensitive; safe to broadcast). */
+export type RealtimePromptEvent = {
+  round: number;
+  endsAtEpochMs: number | null;
 };

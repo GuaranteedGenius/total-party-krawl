@@ -20,6 +20,53 @@
 - Viewers NEVER write Supabase directly. All writes go through authenticated Vercel functions
   (service-role key, server-side only). Public read of non-sensitive match/seat state is allowed via RLS.
 
+## Host (broadcaster) auth & pairing
+
+The **game client** is the channel owner and must authenticate too — otherwise any
+party could publish fake state or read a channel's incoming lock-ins. We prove
+ownership against Twitch, then issue our own short-lived session token.
+
+**Pairing flow** (the Godot client side — OAuth device-code flow + calling these
+endpoints — is a LATER task; the server side below exists now):
+1. In-game, the streamer links their Twitch account via OAuth **device-code flow**.
+   The client ends up holding a Twitch **user access token**.
+2. Client calls `POST /api/host/session` with `Authorization: Bearer <twitch_user_access_token>`.
+   The server validates the token with Twitch (`GET https://id.twitch.tv/oauth2/validate`,
+   header `Authorization: OAuth <token>` — Twitch requires the literal scheme "OAuth").
+   The returned `user_id` IS the channel id (a broadcaster's channel id == their Twitch user id).
+   If `TWITCH_EXTENSION_CLIENT_ID` is configured, the token's `client_id` must also match.
+3. Server ensures a `matches` row for that channel and returns a **host-session JWT**
+   (HS256, `HOST_SESSION_SECRET`, claims `{ sub: channelId, role: "host" }`, ~2h TTL).
+4. The client presents that host JWT on `publish`/`moves`. A host token for channel A
+   can NEVER publish to or read channel B (the token's `sub` is the only channel it touches).
+
+### Host endpoints (under `api/host/`)
+- `POST /api/host/session` — auth `Authorization: Bearer <twitch_user_access_token>`, body `{}`.
+  Resp `{ hostToken, channelId, expiresAt }` (`expiresAt` = epoch ms). `hostToken` is the
+  host-session JWT for the next two calls.
+- `POST /api/host/publish` — auth `Authorization: Bearer <hostToken>`. Body:
+  `{ round, phase, endsAtEpochMs?, boss: { hp, maxHp, alive },
+     seats: [{ seatIndex, hp, maxHp, alive, classId }], snapshot?, channelId? }`.
+  Writes these **mirrors** to `matches`/`seats` (+ `snapshot` jsonb) for the token's channel
+  ONLY, then broadcasts a `state` event (and a `prompt` event when `phase === "lockin"`) on
+  `match:<channelId>`. NO game logic — the server stores exactly what the client computed.
+  If `channelId` is present and != the token's channel, the request is rejected `403`.
+  Seat mirrors only update seats that already exist (claimed by viewers via `/api/join`);
+  the host never fabricates a seat's `opaque_user_id`. Resp `{ ok: true, broadcastPrompt }`.
+- `GET /api/host/moves?round=N` — auth `Authorization: Bearer <hostToken>`. Returns the
+  channel's lock-ins for that round: `{ round, moves: [{ seatIndex, moveId, targetId }] }`.
+  This is the **secure path** for the client to read viewer moves — service-role read, scoped
+  to the token's channel, so the client never needs the anon key for sensitive pre-resolve data.
+
+### Sensitive vs. broadcast rule
+- **Sensitive — viewer lock-ins before resolution:** readable ONLY via `GET /api/host/moves`
+  with a valid host token (service-role). NEVER broadcast on Realtime, NEVER anon-readable
+  (`moves` table is service-role-only in RLS). One viewer must not see another's lock-in early,
+  and no third party may scrape a channel's intended moves.
+- **Non-sensitive — boss/party HP, round, phase, prompt:** fine to broadcast publicly on
+  `match:<channelId>` (the extension/overlay subscribes to display it). The `state`/`prompt`
+  events carry only these fields — never move data.
+
 ## Identifiers
 - `channelId` — Twitch channel id (the match key; one active match per channel for alpha).
 - `seatIndex` — 0..9.
@@ -44,9 +91,12 @@ All JSON. All require auth unless noted. Errors: `{ error: string }` with approp
   state the client published.
 
 ## Supabase Realtime channels
-- `match:<channelId>` — game client subscribes; receives `move` events `{ seatIndex, round, moveId, targetId }`
-  as viewers submit. Game client broadcasts `prompt` `{ round, endsAtEpochMs }` and `state`
-  (the snapshot above) events that the extension may subscribe to for push updates.
+- `match:<channelId>` — game client subscribes (anon key); receives `move` events
+  `{ seatIndex, round, moveId, targetId }` as viewers submit. The `state` (the snapshot above)
+  and `prompt` `{ round, endsAtEpochMs }` events are emitted **server-side** by
+  `POST /api/host/publish` (the host-authenticated path) so the extension/overlay can subscribe
+  for push updates. Only non-sensitive state is ever broadcast (see the sensitive-vs-broadcast
+  rule above) — viewer lock-ins are never broadcast.
 
 ## Supabase schema (per-viewer seat model — replaces the abandoned chat-voting schema)
 - `matches` (channel_id PK-ish, status, current_round, phase, boss_hp, boss_max_hp, updated_at).

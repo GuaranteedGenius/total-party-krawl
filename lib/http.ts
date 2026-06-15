@@ -7,8 +7,9 @@
 // ============================================================
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { AuthError, authenticate } from './twitchAuth.ts';
-import type { ViewerIdentity } from './types.ts';
+import { AuthError, authenticate, extractToken } from './twitchAuth.ts';
+import { verifyHostToken } from './hostAuth.ts';
+import type { HostIdentity, ViewerIdentity } from './types.ts';
 
 export function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.status(status).json(body);
@@ -56,6 +57,27 @@ export function requireAuth(
 }
 
 /**
+ * Authenticate a HOST (broadcaster) request via its host-session JWT in
+ * `Authorization: Bearer <hostToken>`. Returns the host identity (channel
+ * scope) or null (already responded with the right error status).
+ */
+export function requireHost(
+  req: VercelRequest,
+  res: VercelResponse,
+): HostIdentity | null {
+  try {
+    return verifyHostToken(extractToken(req.headers));
+  } catch (err) {
+    if (err instanceof AuthError) {
+      sendError(res, err.status, err.message);
+    } else {
+      sendError(res, 401, 'Unauthorized');
+    }
+    return null;
+  }
+}
+
+/**
  * Parse the JSON body. Vercel populates req.body for application/json, but it
  * may be a string if no content-type was sent. Returns {} for empty bodies.
  */
@@ -87,6 +109,11 @@ export async function guard(
     await fn();
   } catch (err) {
     if (err instanceof BadRequest) {
+      sendError(res, err.status, err.message);
+      return;
+    }
+    // AuthError carries its own HTTP status (e.g. 403 cross-channel publish, 401).
+    if (err instanceof AuthError) {
       sendError(res, err.status, err.message);
       return;
     }

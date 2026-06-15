@@ -169,12 +169,32 @@ class QueryBuilder {
     };
   }
 
-  // update().eq().eq() resolves when awaited.
-  then(resolve: (v: { data: null; error: null }) => unknown) {
-    const exec = async () => {
+  // update().eq().eq() and a bare insert(...) (no .select()) resolve when awaited.
+  then(resolve: (v: { data: null; error: { message: string } | null }) => unknown) {
+    const exec = async (): Promise<{ data: null; error: { message: string } | null }> => {
       if (this.op === 'update') {
         const rows = this.applyFilters();
         for (const r of rows) Object.assign(r, this.payload as Row);
+      } else if (this.op === 'insert') {
+        const row = this.payload as Row;
+        if (this.table === 'matches') {
+          const dup = this.store.find((r) => r.channel_id === row.channel_id);
+          if (dup) {
+            return { data: null, error: { message: 'duplicate key value violates unique constraint' } };
+          }
+        }
+        this.store.push({
+          status: 'active',
+          current_round: 0,
+          phase: 'lobby',
+          boss_hp: 0,
+          boss_max_hp: 0,
+          boss_alive: true,
+          ends_at_epoch_ms: null,
+          snapshot: null,
+          updated_at: new Date().toISOString(),
+          ...row,
+        });
       }
       return { data: null, error: null };
     };

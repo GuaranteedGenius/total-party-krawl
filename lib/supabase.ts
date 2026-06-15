@@ -17,9 +17,12 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type {
   ClassId,
+  HostPublishPayload,
+  MatchPhase,
   MatchRow,
   MoveRow,
   RealtimeMoveEvent,
+  RealtimePromptEvent,
   SeatRow,
   StateSnapshot,
 } from './types.ts';
@@ -73,6 +76,80 @@ export async function getMatch(
     .maybeSingle();
   if (error) throw new Error(`getMatch: ${error.message}`);
   return (data as MatchRow | null) ?? null;
+}
+
+/**
+ * Ensure a `matches` row exists for the channel (the host "owns" their channel
+ * row). Idempotent: inserts a default row if absent, otherwise leaves it alone.
+ * Defaults only — no combat values are computed here.
+ */
+export async function ensureMatch(
+  db: SupabaseClient,
+  channelId: string,
+): Promise<void> {
+  const existing = await getMatch(db, channelId);
+  if (existing) return;
+  const { error } = await db
+    .from('matches')
+    .insert({ channel_id: channelId, status: 'active' });
+  if (error) throw new Error(`ensureMatch: ${error.message}`);
+}
+
+/**
+ * Write the authoritative match-level mirrors the game client published.
+ * Everything here is client-computed; the relay stores it verbatim.
+ */
+export async function writeMatchMirror(
+  db: SupabaseClient,
+  channelId: string,
+  m: {
+    round: number;
+    phase: MatchPhase;
+    endsAtEpochMs: number | null;
+    bossHp: number;
+    bossMaxHp: number;
+    bossAlive: boolean;
+    snapshot: StateSnapshot | null;
+  },
+): Promise<void> {
+  const { error } = await db
+    .from('matches')
+    .update({
+      current_round: m.round,
+      phase: m.phase,
+      ends_at_epoch_ms: m.endsAtEpochMs,
+      boss_hp: m.bossHp,
+      boss_max_hp: m.bossMaxHp,
+      boss_alive: m.bossAlive,
+      snapshot: m.snapshot,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('channel_id', channelId);
+  if (error) throw new Error(`writeMatchMirror: ${error.message}`);
+}
+
+/**
+ * Write the per-seat HP/alive/class mirrors the client published. Upserts on
+ * (channel_id, seat_index) so existing seats update without clobbering the
+ * viewer's opaque_user_id (which the client does not know and must not set).
+ */
+export async function writeSeatMirror(
+  db: SupabaseClient,
+  channelId: string,
+  seatIndex: number,
+  s: { hp: number; maxHp: number; alive: boolean; classId: ClassId | null },
+): Promise<void> {
+  const { error } = await db
+    .from('seats')
+    .update({
+      hp: s.hp,
+      max_hp: s.maxHp,
+      alive: s.alive,
+      class_id: s.classId,
+    })
+    .eq('channel_id', channelId)
+    .eq('seat_index', seatIndex);
+  if (error) throw new Error(`writeSeatMirror: ${error.message}`);
 }
 
 // ------------------------------------------------------------
@@ -194,6 +271,26 @@ export async function upsertMove(
   if (error) throw new Error(`upsertMove: ${error.message}`);
 }
 
+/**
+ * All moves for a (channel, round), ordered by seat_index. This is the SECURE
+ * read path for the game client (service-role, host-token-gated) — viewer
+ * lock-ins are never anon-readable or broadcast before resolution.
+ */
+export async function listMovesForRound(
+  db: SupabaseClient,
+  channelId: string,
+  round: number,
+): Promise<MoveRow[]> {
+  const { data, error } = await db
+    .from('moves')
+    .select('*')
+    .eq('channel_id', channelId)
+    .eq('round', round)
+    .order('seat_index', { ascending: true });
+  if (error) throw new Error(`listMovesForRound: ${error.message}`);
+  return (data as MoveRow[]) ?? [];
+}
+
 /** The caller's move for a given round, or null (used to hydrate lockedMove). */
 export async function getMove(
   db: SupabaseClient,
@@ -229,6 +326,96 @@ export async function broadcastMove(
   const channel = db.channel(`match:${channelId}`);
   await channel.send({ type: 'broadcast', event: 'move', payload: event });
   await db.removeChannel(channel);
+}
+
+/**
+ * Broadcast the NON-SENSITIVE authoritative state snapshot the client published
+ * on `match:<channelId>`, event `state`. The extension subscribes to push HP /
+ * round / phase updates. Never carries viewer lock-ins.
+ */
+export async function broadcastState(
+  db: SupabaseClient,
+  channelId: string,
+  snapshot: StateSnapshot,
+): Promise<void> {
+  const channel = db.channel(`match:${channelId}`);
+  await channel.send({ type: 'broadcast', event: 'state', payload: snapshot });
+  await db.removeChannel(channel);
+}
+
+/**
+ * Broadcast a turn `prompt` (round + soft-timer hint) on `match:<channelId>`.
+ * Non-sensitive; tells viewers to choose an action.
+ */
+export async function broadcastPrompt(
+  db: SupabaseClient,
+  channelId: string,
+  event: RealtimePromptEvent,
+): Promise<void> {
+  const channel = db.channel(`match:${channelId}`);
+  await channel.send({ type: 'broadcast', event: 'prompt', payload: event });
+  await db.removeChannel(channel);
+}
+
+/**
+ * Apply a full host publish atomically-enough for alpha: write the match-level
+ * mirror, the per-seat mirrors, then broadcast `state` (+ `prompt` when the
+ * client says the phase is `lockin`). No combat computation — pure persistence
+ * + relay of what the client already decided.
+ */
+export async function applyHostPublish(
+  db: SupabaseClient,
+  channelId: string,
+  payload: HostPublishPayload,
+): Promise<{ broadcastPrompt: boolean }> {
+  const endsAt = payload.endsAtEpochMs ?? null;
+  const snapshot = payload.snapshot ?? null;
+
+  await writeMatchMirror(db, channelId, {
+    round: payload.round,
+    phase: payload.phase,
+    endsAtEpochMs: endsAt,
+    bossHp: payload.boss.hp,
+    bossMaxHp: payload.boss.maxHp,
+    bossAlive: payload.boss.alive,
+    snapshot,
+  });
+
+  for (const s of payload.seats) {
+    await writeSeatMirror(db, channelId, s.seatIndex, {
+      hp: s.hp,
+      maxHp: s.maxHp,
+      alive: s.alive,
+      classId: s.classId,
+    });
+  }
+
+  // Build the non-sensitive state snapshot to broadcast. Prefer the client's
+  // own snapshot if it supplied one; otherwise assemble from the publish.
+  const stateEvent: StateSnapshot =
+    snapshot ?? {
+      matchPhase: payload.phase,
+      round: payload.round,
+      endsAtEpochMs: endsAt,
+      you: null, // broadcast is channel-wide; per-viewer overlay is /api/state's job
+      boss: { hp: payload.boss.hp, maxHp: payload.boss.maxHp, alive: payload.boss.alive },
+      seats: payload.seats.map((s) => ({
+        seatIndex: s.seatIndex,
+        classId: s.classId,
+        hp: s.hp,
+        maxHp: s.maxHp,
+        alive: s.alive,
+      })),
+    };
+
+  await broadcastState(db, channelId, stateEvent);
+
+  const emitPrompt = payload.phase === 'lockin';
+  if (emitPrompt) {
+    await broadcastPrompt(db, channelId, { round: payload.round, endsAtEpochMs: endsAt });
+  }
+
+  return { broadcastPrompt: emitPrompt };
 }
 
 // ------------------------------------------------------------
