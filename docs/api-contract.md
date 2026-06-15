@@ -57,6 +57,12 @@ endpoints — is a LATER task; the server side below exists now):
   channel's lock-ins for that round: `{ round, moves: [{ seatIndex, moveId, targetId }] }`.
   This is the **secure path** for the client to read viewer moves — service-role read, scoped
   to the token's channel, so the client never needs the anon key for sensitive pre-resolve data.
+- `GET /api/host/seats` — auth `Authorization: Bearer <hostToken>`. Returns the channel's
+  current seat roster, ordered by `seatIndex`:
+  `{ seats: [{ seatIndex, opaqueUserId, classId, hp, maxHp, alive }] }`. Lets the client learn
+  who joined and which class they picked so it can build the party. Service-role read scoped to
+  the token's channel (a host token for channel A can NEVER read channel B's seats). Pure
+  projection of the persisted seat mirrors — NO game logic.
 
 ### Sensitive vs. broadcast rule
 - **Sensitive — viewer lock-ins before resolution:** readable ONLY via `GET /api/host/moves`

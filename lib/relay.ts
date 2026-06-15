@@ -17,6 +17,7 @@ import {
   ensureMatch,
   getSeatForUser,
   listMovesForRound,
+  listSeats,
   readStateForUser,
   setSeatClass,
   upsertMove,
@@ -30,6 +31,7 @@ import type {
   HostPublishSeat,
   MatchPhase,
   MoveRow,
+  SeatRow,
   StateSnapshot,
   ViewerIdentity,
 } from './types.js';
@@ -346,6 +348,42 @@ export async function handleHostMoves(
       seatIndex: r.seat_index,
       moveId: r.move_id,
       targetId: r.target_id,
+    })),
+  };
+}
+
+// ----- GET /api/host/seats -----
+
+export interface HostSeatsResult {
+  seats: Array<{
+    seatIndex: number;
+    opaqueUserId: string;
+    classId: ClassId | null;
+    hp: number;
+    maxHp: number;
+    alive: boolean;
+  }>;
+}
+
+/**
+ * Read the current seat roster for the TOKEN'S channel only — who joined and
+ * which class they picked — so the game client can build the party. Pure
+ * projection of the persisted seat mirrors (service-role read, scoped to the
+ * host token's channel, ordered by seatIndex). NO game logic.
+ */
+export async function handleHostSeats(
+  db: SupabaseClient,
+  host: HostIdentity,
+): Promise<HostSeatsResult> {
+  const rows: SeatRow[] = await listSeats(db, host.channelId);
+  return {
+    seats: rows.map((r) => ({
+      seatIndex: r.seat_index,
+      opaqueUserId: r.opaque_user_id,
+      classId: r.class_id,
+      hp: r.hp,
+      maxHp: r.max_hp,
+      alive: r.alive,
     })),
   };
 }
