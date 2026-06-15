@@ -9,7 +9,7 @@
 // ============================================================
 
 import jwt from 'jsonwebtoken';
-import type { ViewerIdentity } from './types.ts';
+import type { ViewerIdentity } from './types.js';
 
 /** Thrown for any auth failure. `status` is the HTTP code the handler should return. */
 export class AuthError extends Error {

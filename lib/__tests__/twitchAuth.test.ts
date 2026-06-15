@@ -6,7 +6,7 @@ import {
   authenticate,
   extractToken,
   verifyExtensionJwt,
-} from '../twitchAuth.ts';
+} from '../twitchAuth.js';
 
 // Twitch stores the extension secret base64-encoded; it signs HS256 with the
 // DECODED bytes. Mirror that exactly here.

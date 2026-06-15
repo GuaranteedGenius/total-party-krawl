@@ -1,16 +1,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { MockSupabase } from './mockSupabase.ts';
-import { BadRequest } from '../http.ts';
-import { AuthError } from '../hostAuth.ts';
+import { MockSupabase } from './mockSupabase.js';
+import { BadRequest } from '../http.js';
+import { AuthError } from '../hostAuth.js';
 import {
   handleHostMoves,
   handleHostPublish,
   handleHostSession,
   parseHostPublish,
-} from '../relay.ts';
+} from '../relay.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { HostIdentity, HostPublishPayload } from '../types.ts';
+import type { HostIdentity, HostPublishPayload } from '../types.js';
 
 const CH = 'chanA';
 const asDb = (m: MockSupabase) => m as unknown as SupabaseClient;

@@ -25,7 +25,7 @@ import type {
   RealtimePromptEvent,
   SeatRow,
   StateSnapshot,
-} from './types.ts';
+} from './types.js';
 
 export const MAX_SEATS = 10;
 

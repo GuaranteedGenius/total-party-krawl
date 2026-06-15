@@ -1,15 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { MockSupabase } from './mockSupabase.ts';
-import { BadRequest } from '../http.ts';
+import { MockSupabase } from './mockSupabase.js';
+import { BadRequest } from '../http.js';
 import {
   handleClass,
   handleJoin,
   handleMove,
   handleState,
-} from '../relay.ts';
+} from '../relay.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { ViewerIdentity } from '../types.ts';
+import type { ViewerIdentity } from '../types.js';
 
 const CH = 'chan-1';
 

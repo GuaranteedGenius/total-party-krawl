@@ -7,9 +7,9 @@
 // ============================================================
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { AuthError, authenticate, extractToken } from './twitchAuth.ts';
-import { verifyHostToken } from './hostAuth.ts';
-import type { HostIdentity, ViewerIdentity } from './types.ts';
+import { AuthError, authenticate, extractToken } from './twitchAuth.js';
+import { verifyHostToken } from './hostAuth.js';
+import type { HostIdentity, ViewerIdentity } from './types.js';
 
 export function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.status(status).json(body);

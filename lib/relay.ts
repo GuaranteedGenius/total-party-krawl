@@ -8,8 +8,8 @@
 // ============================================================
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { BadRequest } from './http.ts';
-import { AuthError } from './twitchAuth.ts';
+import { BadRequest } from './http.js';
+import { AuthError } from './twitchAuth.js';
 import {
   applyHostPublish,
   broadcastMove,
@@ -20,8 +20,8 @@ import {
   readStateForUser,
   setSeatClass,
   upsertMove,
-} from './supabase.ts';
-import { mintHostToken, validateTwitchUserToken } from './hostAuth.ts';
+} from './supabase.js';
+import { mintHostToken, validateTwitchUserToken } from './hostAuth.js';
 import type {
   ClassId,
   HostIdentity,
@@ -32,7 +32,7 @@ import type {
   MoveRow,
   StateSnapshot,
   ViewerIdentity,
-} from './types.ts';
+} from './types.js';
 
 const VALID_CLASSES: ReadonlySet<ClassId> = new Set<ClassId>([
   'class.tank',

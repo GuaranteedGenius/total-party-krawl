@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireHost } from '../http.ts';
-import { mintHostToken } from '../hostAuth.ts';
+import { requireHost } from '../http.js';
+import { mintHostToken } from '../hostAuth.js';
 
 const HOST_SECRET = 'host-http-test-secret-0123456789';
 

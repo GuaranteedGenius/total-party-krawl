@@ -16,8 +16,8 @@
 // ============================================================
 
 import jwt from 'jsonwebtoken';
-import { AuthError } from './twitchAuth.ts';
-import type { HostIdentity, TwitchTokenInfo } from './types.ts';
+import { AuthError } from './twitchAuth.js';
+import type { HostIdentity, TwitchTokenInfo } from './types.js';
 
 export { AuthError };
 

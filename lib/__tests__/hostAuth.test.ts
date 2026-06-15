@@ -7,7 +7,7 @@ import {
   mintHostToken,
   validateTwitchUserToken,
   verifyHostToken,
-} from '../hostAuth.ts';
+} from '../hostAuth.js';
 
 const HOST_SECRET = 'host-session-secret-for-tpk-tests-0123456789';
 

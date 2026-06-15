@@ -2,9 +2,9 @@
 // Auth: Authorization: Bearer <hostToken>. Writes to the TOKEN'S channel only.
 // Thin relay; stores exactly what the client published. NO game logic.
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { guard, handlePreflight, parseBody, requireHost, sendJson } from '../../lib/http.ts';
-import { getSupabase } from '../../lib/supabase.ts';
-import { handleHostPublish } from '../../lib/relay.ts';
+import { guard, handlePreflight, parseBody, requireHost, sendJson } from '../../lib/http.js';
+import { getSupabase } from '../../lib/supabase.js';
+import { handleHostPublish } from '../../lib/relay.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handlePreflight(req, res, ['POST'])) return;

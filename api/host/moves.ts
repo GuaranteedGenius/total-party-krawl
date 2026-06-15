@@ -3,9 +3,9 @@
 // This is the ONLY path that exposes pre-resolution moves (never anon/broadcast).
 // Thin relay; no game logic.
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { guard, handlePreflight, requireHost, sendJson } from '../../lib/http.ts';
-import { getSupabase } from '../../lib/supabase.ts';
-import { handleHostMoves } from '../../lib/relay.ts';
+import { guard, handlePreflight, requireHost, sendJson } from '../../lib/http.js';
+import { getSupabase } from '../../lib/supabase.js';
+import { handleHostMoves } from '../../lib/relay.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handlePreflight(req, res, ['GET'])) return;
