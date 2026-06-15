@@ -3,8 +3,8 @@
  * LIGHTWEIGHT CONTROLLER. No game logic lives here.
  *
  * API_BASE is the Vercel deployment that hosts the relay API (see docs/api-contract.md).
- * It is a placeholder until the backend deploys; the real URL is set by the streamer in
- * config.html (persisted via Twitch.ext.configuration) or hardcoded here for alpha.
+ * Defaults to the live production deployment; the streamer can override it in config.html
+ * (persisted via Twitch.ext.configuration).
  *
  * All other paths are RELATIVE because Twitch hosts the zipped extension contents.
  */
@@ -12,8 +12,8 @@
   'use strict';
 
   var TPK_CONFIG = {
-    // Default API base. Overridden at runtime by streamer config when present.
-    API_BASE: 'https://total-party-krawl.vercel.app',
+    // Default API base (live production relay). Overridden at runtime by streamer config when present.
+    API_BASE: 'https://total-party-krawl-guaranteed-genius-projects.vercel.app',
 
     // REST endpoints (relative to API_BASE), per docs/api-contract.md.
     ENDPOINTS: {
