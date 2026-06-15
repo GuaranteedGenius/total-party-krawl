@@ -1,17 +1,7 @@
 {
-  "version": 2,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": false
-  },
-  "installCommand": "npm install",
-  "buildCommand": "",
-  "outputDirectory": ".",
-  "framework": null,
-  "devCommand": "",
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@3.0.26"
-    }
   },
   "headers": [
     {
@@ -22,6 +12,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Extension-JWT" }
       ]
     }
-  ],
-  "rewrites": []
+  ]
 }
