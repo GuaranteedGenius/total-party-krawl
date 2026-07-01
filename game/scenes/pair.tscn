@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dpa1rtwitch0pair"]
+[gd_scene format=3 uid="uid://b06uk5ckg2eab"]
 
 [ext_resource type="Script" path="res://scripts/net/PairController.cs" id="1_pair"]
 

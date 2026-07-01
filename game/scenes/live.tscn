@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dlivetwitch0scn"]
+[gd_scene format=3 uid="uid://be21ebcfyl2k0"]
 
 [ext_resource type="PackedScene" uid="uid://esq267005jjw" path="res://assets/test_floor.glb" id="1_floor"]
 [ext_resource type="PackedScene" uid="uid://b0vaclrpqvli6" path="res://assets/boss_test_model.glb" id="2_boss"]
